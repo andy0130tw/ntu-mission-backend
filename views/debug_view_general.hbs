@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }} - Debugging</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    {{#if __USERS }}
+    {{#each dataset }}
+      <h2>{{ __cnt }}. {{#if name}}{{ name }}{{else }}--NO NAME--{{/if }}</h2>
+      {{ fb_id }}, Score = {{ score }}.
+    {{/each }}
+    {{else if __MISSIONS }}
+    Difficulty: hard = 3, intermediate = 2, rookie = 1.
+    {{#each dataset }}
+      <h2>{{ id }}. {{ title }}</h2>
+      Category: {{ category }}, difficulty: {{ difficulty }}.
+    {{/each }}
+    {{else }}
+      ERROR! DOES NOT SPECIFY DATASET ATTR!
+    {{/if }}
+</body>
+</html>
