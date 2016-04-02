@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var fs = require('fs');
 
 var async      = require('async');
@@ -55,6 +57,7 @@ var SCORE_BY_DIFFICULTY = {
 
 /**
  *  extract the first legal hashtag
+ *  @param {string} str - the post
  */
 function extractHashtag(str) {
   // FIXME: figure out what to place before the # character
@@ -88,6 +91,8 @@ function probePageFeed() {
       var list = resp.body.data;
       var paging = resp.body.paging;
 
+      var scoreCalculationArr = [];
+
       // SQLite db will fail randomly, use `eachSeries`
       async.each(list, function(post, cb_nextPost) {
         // ignore if it is not a piece of message
@@ -95,14 +100,35 @@ function probePageFeed() {
 
         logger.debug('post', post);
 
-        processPost(post, function(err, verdict) {
+        processPost(post, function(err, verdict, recordInstance) {
           report[verdict]++;
+          if (recordInstance)
+            scoreCalculationArr.push(recordInstance);
+
           return cb_nextPost();
         });
 
       }, function(err) {
         if (err) throw err;
         logger.debug('post page check ok');
+
+        async.eachSeries(scoreCalculationArr, function(rec, cb_next) {
+          // try to insert, if success then increase the score
+          rec.save().then(function() {
+            // XXX
+            models.Mission.findById(rec.mission_id).then(function(mis) {
+              models.User.findById(rec.user_id).then(function(usr) {
+                var inc = SCORE_BY_DIFFICULTY[mis.difficulty];
+                log('increase score', usr.name, usr.score, '-> +' + inc);
+                return usr.increment('score', { by: inc });
+              }).then(function() {cb_next(); });
+            });
+          }, function() {
+            // do nothing, do not emit errors
+            cb_next();
+          });
+        });
+
         if (paging) {
           recordCount += list.length;
           // FB already encode access_token into paging urls
@@ -185,44 +211,37 @@ function processPost(post, cb_report) {
       logger.verbose('user id', userFbObj.id);
 
       var userKey, userFbId = userFbObj.id;
+
+      var callNext = function(user) {
+        userKey = user.id;
+        cb_next(null, postDetailed, false, userKey);
+      };
+
+      var searchAndCallNext = function() {
+        models.User
+          .findOne({ where: { fb_id: userFbId } })
+          .then(callNext);
+      }
+
       models.User
         .findOne({ where: { fb_id: userFbId } })
         .then(function(user) {
           if (user) {
             userKey = user.id;
             logger.verbose('user key', userKey);
-            cb_next(null, postDetailed, false, userKey);
+            callNext(user);
           } else {
-            logger.verbose('user not in db; setting -1');
+            logger.verbose('user not in db; trying to add');
             models.User.create({
-              fb_id: userFbObj.id,
-              name: userFbObj.name,
-              score: 0
-            }).then(function(user) {
-              userKey = user.id;
-              cb_next(null, postDetailed, false, userKey);
+              fb_id: userFbId,
+              name: userFbObj.name
+            }).then(callNext, function() {
+              // unique constraint failed...
+              logger.debug('adding because last sync failure...')
+              searchAndCallNext();
             });
           }
         });
-
-      // this code will cause deadlock, fuck
-      // models.User.findOrCreate({
-      //   where: { fb_id: userFbObj.id },
-      //   defaults: {
-      //     name: userFbObj.name,
-      //     score: 0
-      //     // TODO: fetch avatar / lazy loading? / queued?
-      //   }
-      // })
-      // .spread(function(user, created) {
-      //   if (created) {
-      //     log('user key', user.id);
-      //   } else {
-      //     user.id = -1;
-      //     // log('user not in db, added', user.id);
-      //   }
-      //   cb_next(null, postDetailed, false, user.id);
-      // });
     },
     function(postDetailed, isLocal, userKey, cb_next) { /* 4: save post into DB */
       if (isLocal)
@@ -240,7 +259,7 @@ function processPost(post, cb_report) {
         cb_next(null, postInstance);
       });
     },
-    function(postInstance, cb_next) { /* 5: update hash tag and increase corresponding score */
+    function(postInstance, cb_next) { /* 5: update hash tag and make the record of score */
       // XXX
       if (!contentChanged) {
         logger.debug('content not changed, skipping');
@@ -250,25 +269,28 @@ function processPost(post, cb_report) {
       models.Mission
         .findOne({ where: { hash: legalHashId } })
         .then(function(mis) {
-          var misId = mis ? mis.id : null;
+          if (!mis)
+            return cb_next(null, postInstance, null);
+
           postInstance
-            .update({ mission_id: misId })
+            .update({ mission_id: mis.id })
             .then(function() {
-              models.User
-                .findOne({ where: { id: postInstance.user_id } })
-                .then(function(user) {
-                  if (mis) {
-                    log('increase score ', user.name, user.score, '-> +' + SCORE_BY_DIFFICULTY[mis.difficulty]);
-                    user.update({ score: user.score + SCORE_BY_DIFFICULTY[mis.difficulty] })
-                      .then(function() {
-                        return cb_next(null, postInstance);
-                      });
-                  } else return cb_next(null, postInstance);
+              models.ScoreRecord
+                .findOrInitialize({
+                  where: {
+                    user_id: postInstance.user_id,
+                    mission_id: mis.id
+                  }
+                }).spread(function(record, created) {
+                  // if created, return this record to be calculated on total score
+                  // if not, return null indicating that it is duplicated and no score should be given
+                  var recordInstance = created ? record : null;
+                  return cb_next(null, postInstance, recordInstance);
                 });
-            });
+              });
         });
-      }
-  ], function(err, postInstance) {
+    }
+  ], function(err, postInstance, recordInstance) {
     if (err) {
       winston.error('post sync failed!!');
       throw err;
@@ -281,7 +303,7 @@ function processPost(post, cb_report) {
       verdict = 'updated';
     if (verdict != 'intact')
       log('post sync success', verdict, postInstance.id, postInstance.fb_id);
-    cb_report(null, verdict);
+    cb_report(null, verdict, recordInstance);
   });
 }
 

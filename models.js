@@ -17,9 +17,9 @@ var User = db.define('user', {
   fb_id:      { type: Seq.STRING, unique: true },
   student_id: { type: Seq.STRING, unique: true },
   uid:        { type: Seq.STRING, unique  : true },
-  name:       { type: Seq.STRING },
-  avatar:     { type: Seq.STRING },
-  score:      { type: Seq.INTEGER, defaults: 0 },
+  name:       { type: Seq.STRING },                    // }
+  avatar:     { type: Seq.STRING },                    // }- these fields only work as a cache!
+  score:      { type: Seq.INTEGER, defaultValue: 0 },  // }
   confirmed:  { type: Seq.BOOLEAN },
   disabled:   { type: Seq.BOOLEAN }
 });
@@ -30,7 +30,7 @@ var Mission = db.define('mission', {
   category:    { type: Seq.STRING },
   subcategory: { type: Seq.STRING },
   content:     { type: Seq.TEXT },
-  difficulty:  { type: Seq.INTEGER, defaults: 1 },  // ENUM?
+  difficulty:  { type: Seq.INTEGER, defaultValue: 1 },  // ENUM?
   score:       { type: Seq.INTEGER }
 });
 
@@ -45,9 +45,16 @@ var Post = db.define('post', {
   // mid related to Mission
 });
 
+var ScoreRecord = db.define('scoreRecord', {
+  // uid related to User
+  // mid related to Mission
+});
+
 // foreign keys
 User.hasMany(Post);
 Mission.hasMany(Post);
+User.hasMany(ScoreRecord);
+Mission.hasMany(ScoreRecord);
 
 db.sync().then(function() {
   // create void user
@@ -66,4 +73,5 @@ module.exports = {
   User:        User,
   Mission:     Mission,
   Post:        Post,
+  ScoreRecord: ScoreRecord
 };
