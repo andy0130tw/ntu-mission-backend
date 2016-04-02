@@ -13,6 +13,6 @@ missions.forEach((v) => {
 models.Mission.sync().then(function() {
   models.Mission
   .bulkCreate(missions).then(function() {
-    console.log('Success');
+    console.log('Successfully imported ' + missions.length + ' missions.');
   });
 })
