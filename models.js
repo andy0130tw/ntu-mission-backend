@@ -46,6 +46,7 @@ var Post = db.define('post', {
 });
 
 var ScoreRecord = db.define('scoreRecord', {
+  // pid related to Post
   // uid related to User
   // mid related to Mission
 });
@@ -53,6 +54,8 @@ var ScoreRecord = db.define('scoreRecord', {
 // foreign keys
 User.hasMany(Post);
 Mission.hasMany(Post);
+
+Post.hasOne(ScoreRecord);
 User.hasMany(ScoreRecord);
 Mission.hasMany(ScoreRecord);
 

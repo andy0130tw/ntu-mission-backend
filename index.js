@@ -119,9 +119,10 @@ function probePageFeed() {
             models.Mission.findById(rec.mission_id).then(function(mis) {
               models.User.findById(rec.user_id).then(function(usr) {
                 var inc = SCORE_BY_DIFFICULTY[mis.difficulty];
-                log('increase score', usr.name, usr.score, '-> +' + inc);
+                var nsc = usr.score + inc;
+                log('increase score', usr.name, usr.score, '->', nsc, '(+' + inc + ')');
                 return usr.increment('score', { by: inc });
-              }).then(function() {cb_next(); });
+              }).then(function() { cb_next(); });
             });
           }, function() {
             // do nothing, do not emit errors
@@ -187,9 +188,44 @@ function processPost(post, cb_report) {
           contentChanged = false;
           cb_next_local_wrapper();
         } else {
-          localPost.update({
-            content: post.message
-          }).then(cb_next_local_wrapper);
+          async.series([
+            function(cb) { /* 1 */
+              log('updating mission', localPost.mission_id, 'to', legalHashId);
+              if (!localPost.mission_id || localPost.mission_id == legalHashId) return cb();
+              models.ScoreRecord
+                .findOne({ where: { post_id: localPost.id } })
+                .then(function(sr) {
+                  if (!sr) { cb(); return; }
+                  models.Mission
+                    .findById(sr.mission_id)
+                    .then(function(mis) {
+                      models.User
+                        .findById(sr.user_id)
+                        .then(function(usr) {
+                          var dec = SCORE_BY_DIFFICULTY[mis.difficulty];
+                          var nsc = usr.score - dec;
+                          log('decrease score', usr.name, usr.score, '->', nsc, '(-' + dec + ')');
+                          return usr.decrement('score', { by: dec });
+                        }).then(function() {
+                          sr.destroy().then(function() {
+                            cb();
+                          });
+                        });
+                    });
+                });
+            },
+            function(cb) { /* 2 */
+              localPost.update({
+                content: post.message,
+                mission_id: legalHashId
+              }).then(function() {
+                cb();
+              });
+            },
+            function() { /* 3 */
+              cb_next_local_wrapper();
+            }
+          ]);
         }
         return;
       }
@@ -221,7 +257,7 @@ function processPost(post, cb_report) {
         models.User
           .findOne({ where: { fb_id: userFbId } })
           .then(callNext);
-      }
+      };
 
       models.User
         .findOne({ where: { fb_id: userFbId } })
@@ -232,9 +268,11 @@ function processPost(post, cb_report) {
             callNext(user);
           } else {
             logger.verbose('user not in db; trying to add');
+            console.log(userFbObj);
             models.User.create({
               fb_id: userFbId,
-              name: userFbObj.name
+              name: userFbObj.name,
+              avatar: userFbObj.picture.data.url
             }).then(callNext, function() {
               // unique constraint failed...
               logger.debug('adding because last sync failure...')
@@ -253,8 +291,9 @@ function processPost(post, cb_report) {
       models.Post.create({
         fb_id: postDetailed.id,
         content: postDetailed.message,
+        photo_url: postDetailed.full_picture,
         user_id: userKey,
-        fb_ts: postDetailed.timestamp
+        fb_ts: postDetailed.updated_time
       }).then(function(postInstance) {  // spread?
         cb_next(null, postInstance);
       });
@@ -280,6 +319,9 @@ function processPost(post, cb_report) {
                   where: {
                     user_id: postInstance.user_id,
                     mission_id: mis.id
+                  },
+                  defaults: {
+                    post_id: postInstance.id
                   }
                 }).spread(function(record, created) {
                   // if created, return this record to be calculated on total score
