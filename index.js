@@ -51,9 +51,9 @@ app.use(function(req, resp) {
 })
 
 var SCORE_BY_DIFFICULTY = {
-  '1': 1,
-  '2': 10,
-  '3': 100
+  '1': 2,
+  '2': 3,
+  '3': 5
 };
 
 /**
@@ -351,7 +351,7 @@ function processPost(post, cb_report) {
 
 models.db.sync().then(function() {
   log('Model synced; ready for requests');
-  setInterval(probePageFeed, config.PROBE_INTERVAL || 60000);
+  setInterval(probePageFeed, config.PROBE_INTERVAL || 300000);
   setTimeout(probePageFeed, 0);
 });
 
