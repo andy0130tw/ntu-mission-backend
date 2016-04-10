@@ -3,6 +3,10 @@ var models = require('./models');
 
 var app = express();
 
+app.get('/', function(req, resp) {
+  resp.render('debug_view_home');
+});
+
 app.get('/missions', function(req, resp) {
   models.Mission.findAll().then(function(records) {
     var result = records.map(function(v) {

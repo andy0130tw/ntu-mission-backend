@@ -44,6 +44,7 @@ app.get('/', function(req, resp) {
 });
 
 app.use('/debug', require('./debug'));
+app.use('/vendor', express.static('./vendor'));
 
 app.use(function(req, resp) {
   resp.send('404');
@@ -51,8 +52,8 @@ app.use(function(req, resp) {
 
 var SCORE_BY_DIFFICULTY = {
   '1': 1,
-  '2': 3,
-  '3': 5
+  '2': 10,
+  '3': 100
 };
 
 /**
@@ -62,7 +63,7 @@ var SCORE_BY_DIFFICULTY = {
 function extractHashtag(str) {
   // FIXME: figure out what to place before the # character
   // note: we are not going to make it perfect
-  var matched = str.match(/\B#ntumission([0-9]+)(?![0-9])/i);
+  var matched = str.match(/\B#ntu([A-Z0-9]+?)(?![A-Z0-9])/i);
   //(?:\b|^)#test([0-9]+)(?=[\s.,:,]|$)/i);
   // some control characters (\u200E and \u202C) are removed from string
   if (matched) return matched[1];
@@ -154,8 +155,8 @@ function probePageFeed() {
 }
 
 function processPost(post, cb_report) {
-  // convert to number
-  var legalHashId = extractHashtag(post.message) - 0;
+  // no longer convert to number
+  var legalHashId = extractHashtag(post.message);
   var contentChanged = true;
 
   // used in logging
@@ -268,7 +269,6 @@ function processPost(post, cb_report) {
             callNext(user);
           } else {
             logger.verbose('user not in db; trying to add');
-            console.log(userFbObj);
             models.User.create({
               fb_id: userFbId,
               name: userFbObj.name,
