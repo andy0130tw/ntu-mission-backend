@@ -38,4 +38,18 @@ app.get('/users', function(req, resp) {
   });
 });
 
+app.get('/log', function(req, resp) {
+  models.ScoreRecord.findAll().then(function(records) {
+    var result = records.map(function(v, i) {
+      return v.dataValues;
+    });
+
+    resp.render('debug_view_general', {
+      title: 'Log',
+      dataset: result,
+      __LOG: 1
+    });
+  });
+});
+
 module.exports = app;

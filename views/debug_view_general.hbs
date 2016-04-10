@@ -15,12 +15,13 @@
 
     <table class="table table-hover">
     <p>
-    Scoring：難 = 100, 中 = 10, 易 = 1.
+    Scoring：難 = 5, 中 = 3, 易 = 2.
     </p>
     <thead>
       <tr>
         <th>Rank #</th>
         <th>Name</th>
+        <th>Photo</th>
         <th>FB ID</th>
         <th>Score</th>
         <th>Last updated at</th>
@@ -31,6 +32,7 @@
       <tr>
         <td>{{ __cnt }}</td>
         <td>{{#if name}}{{ name }}{{else }}--NO NAME--{{/if }}</td>
+        <td>{{#if avatar}}<img class="img-thumbnail" src="{{ avatar }}">{{/if }}</td>
         <td>{{ fb_id }}</td>
         <td>{{ score }}</td>
         <td>{{ updated_at }}</td>
@@ -58,14 +60,17 @@
     {{#each dataset }}
       <tr class="row-{{ category }} difficulty-{{ difficulty }}">
         <td>{{ id }}</td>
-        <td>{{ title }}</td>
         <td>{{ category }}</td>
+        <td>{{ title }}</td>
         <td>{{ difficulty }}</td>
         <td>{{ hash }}</td>
       </tr>
     {{/each }}
     </tbody>
     </table>
+
+    {{else if __LOG }}
+    <h1>WIP</h1>
 
     {{else }}
       ERROR! DOES NOT SPECIFY DATASET ATTR!
