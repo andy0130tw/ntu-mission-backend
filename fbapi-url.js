@@ -23,7 +23,7 @@ module.exports = {
     return reqWrapper({
       url: FB_API_BASE + postId + '/',
       qs: {
-        fields: 'permalink_url,message,from{name,picture},full_picture,created_time'
+        fields: 'permalink_url,message,from{name,picture},full_picture,created_time,likes.limit(1000)'
       }
     });
   },

@@ -39,6 +39,7 @@ var Post = db.define('post', {
   content:   { type: Seq.TEXT },
   photo_url: { type: Seq.TEXT },
   deleted:   { type: Seq.BOOLEAN },
+  likes:     { type: Seq.INTEGER },
   fb_ts:     { type: Seq.DATE },
   status:    { type: Seq.INTEGER }  // ENUM?
   // uid related to User

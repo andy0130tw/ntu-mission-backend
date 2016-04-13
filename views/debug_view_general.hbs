@@ -71,7 +71,36 @@
     </table>
 
     {{else if __LOG }}
-    <h1>WIP</h1>
+    <p>
+      For debugging only, mostly.
+    </p>
+    <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>圖片</th>
+        <th>content</th>
+        <th>讚數</th>
+        <th>timestamp</th>
+        <th>User ID</th>
+        <th>Mission ID</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{#each dataset }}
+      <tr>
+        <td>{{ id }}</td>
+        <td>{{#if photo_url}}<img class="img-thumbnail img-fb-photo" src="{{ photo_url }}">{{/if }}</td>
+        <td class="debug-main-content">{{{ __content }}}</td>
+        <td>{{ likes }}</td>
+        <td>{{ fb_ts }}</td>
+        <td>{{ user_id }}</td>
+        <td>{{ mission_id }}</td>
+      </tr>
+    {{/each }}
+    </tbody>
+    </table>
+
 
     {{else }}
       ERROR! DOES NOT SPECIFY DATASET ATTR!

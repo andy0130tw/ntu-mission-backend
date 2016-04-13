@@ -11,10 +11,7 @@ var missions = require('../missions.json');
 // });
 
 [
-  {"title": "old mission #1", "difficulty": 1, "hash": "MISSION01"},
-  {"title": "old mission #2", "difficulty": 3, "hash": "MISSION02"},
-  {"title": "old mission #3", "difficulty": 3, "hash": "MISSION03"},
-  {"title": "old mission #4", "difficulty": 1, "hash": "MISSION04"},
+  {"title": "[Special] 笑話大賽", "difficulty": 0, "hash": "Q01"},
 ].forEach((v, i) => {
     v.category = '__OLD__';
     v.id = -(i + 1);

@@ -51,10 +51,18 @@ app.use(function(req, resp) {
 })
 
 var SCORE_BY_DIFFICULTY = {
+  '0': 0,
   '1': 2,
   '2': 3,
   '3': 5
 };
+
+var req_session = request.defaults({
+    pool: { maxSockets: 4 },
+    gzip: true,
+    json: true,
+    forever: true
+});
 
 /**
  *  extract the first legal hashtag
@@ -86,7 +94,7 @@ function probePageFeed() {
     return hasNext;
   }, function(cb_nextPage) {
     logger.verbose('send feed req', reqObj);
-    request.get(reqObj, function(err, resp) {
+    req_session.get(reqObj, function(err, resp) {
       if (err)
         cb_nextPage(err);
       var list = resp.body.data;
@@ -129,6 +137,8 @@ function probePageFeed() {
             // do nothing, do not emit errors
             cb_next();
           });
+        }, function() {
+          log('Score processing end');
         });
 
         if (paging) {
@@ -233,7 +243,7 @@ function processPost(post, cb_report) {
 
       contentFetched = true;
       logger.verbose('detail needed');
-      request.get(fbApiUrl.POST(post.id), function(err, resp) {
+      req_session.get(fbApiUrl.POST(post.id), function(err, resp) {
         // TODO: err handling
         cb_next(null, resp.body, false, resp.body.from);
       });
@@ -293,7 +303,8 @@ function processPost(post, cb_report) {
         content: postDetailed.message,
         photo_url: postDetailed.full_picture,
         user_id: userKey,
-        fb_ts: postDetailed.updated_time
+        likes: postDetailed.likes ? postDetailed.likes.data.length : 0,
+        fb_ts: post.updated_time
       }).then(function(postInstance) {  // spread?
         cb_next(null, postInstance);
       });

@@ -39,9 +39,15 @@ app.get('/users', function(req, resp) {
 });
 
 app.get('/log', function(req, resp) {
-  models.ScoreRecord.findAll().then(function(records) {
+  models.Post.findAll({
+    order: [['fb_ts', 'DESC']]
+  }).then(function(records) {
     var result = records.map(function(v, i) {
-      return v.dataValues;
+      var dv = v.dataValues;
+      if (dv.content) {
+        dv.__content = dv.content.replace(/\n/g, '<br>');
+      }
+      return dv;
     });
 
     resp.render('debug_view_general', {
