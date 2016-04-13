@@ -13,7 +13,7 @@ var missions = require('../missions.json');
 [
   {"title": "[Special] 笑話大賽", "difficulty": 0, "hash": "Q01"},
 ].forEach((v, i) => {
-    v.category = '__OLD__';
+    v.category = 'SPECIAL';
     v.id = -(i + 1);
     missions.push(v);
 });
