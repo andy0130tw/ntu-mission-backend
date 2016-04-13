@@ -1,0 +1,13 @@
+.row-campus  { background: #a5d6a7; }
+.row-emotion { background: #90caf9; }
+.row-life    { background: #fff59d; }
+.row-fun     { background: #f48fb1; }
+.row-issue   { background: #ce93d8; }
+
+.img-fb-photo {
+  max-width: 200px;
+}
+
+.debug-main-content {
+  font-size: 160%;
+}
