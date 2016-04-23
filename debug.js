@@ -3,15 +3,42 @@ var models = require('./models');
 
 var app = express();
 
+var DIFFICULTY_LABEL = {
+  1: '易',
+  2: '中',
+  3: '難'
+};
+
+var CATEGORY_LABEL = {
+  'campus':  '校園',
+  'emotion': '情感',
+  'life':    '生活',
+  'fun':     '娛樂',
+  'issue':   '議題'
+}
+
 app.get('/', function(req, resp) {
   resp.render('debug_view_home');
 });
 
 app.get('/missions', function(req, resp) {
   models.Mission.findAll().then(function(records) {
-    var result = records.map(function(v) {
-      return v.dataValues;
+    var list = records.map(function(v) {
+      var dv = v.dataValues;
+      dv.__difficulty = DIFFICULTY_LABEL[dv.difficulty] || dv.difficulty;
+      return dv;
     });
+
+    var hash = {};
+    list.forEach(function(item) {
+      hash[item.category] = hash[item.category] || [];
+      hash[item.category].push(item);
+    });
+
+    var result = [];
+    for (var x in hash) {
+      result.push({ label: CATEGORY_LABEL[x] || x, list: hash[x] });
+    }
 
     resp.render('debug_view_general', {
       title: 'Mission List',

@@ -33,7 +33,7 @@
       <tr>
         <td>{{ __cnt }}</td>
         <td>{{#if name}}{{ name }}{{else }}--NO NAME--{{/if }}</td>
-        <td>{{#if avatar}}<img class="img-thumbnail" src="{{ avatar }}">{{/if }}</td>
+        <td>{{#if avatar}}<img class="img-thumbnail" src="http://graph.facebook.com/{{ fb_id }}/picture?type=large">{{/if }}</td>
         <td>{{ fb_id }}</td>
         <td>{{ score }}</td>
         <td>{{ updated_at }}</td>
@@ -43,14 +43,12 @@
     {{else if __MISSIONS }}
 
     <p>
-    難度說明: 難 = 3, 中 = 2, 易 = 1.<br>
     任務關鍵字解析規則：<code>NTU</code> + 英文數字字串，不分大小寫。
     </p>
-    <table class="table table-hover">
+    <table class="table table-hover table-category">
     <thead>
       <tr>
         <th>ID</th>
-        <th>主分類</th>
         <!--<th>次分類</th>-->
         <th>標題</th>
         <th>難度</th>
@@ -59,13 +57,17 @@
     </thead>
     <tbody>
     {{#each dataset }}
-      <tr class="row-{{ category }} difficulty-{{ difficulty }}">
-        <td>{{ id }}</td>
-        <td>{{ category }}</td>
-        <td>{{ title }}</td>
-        <td>{{ difficulty }}</td>
-        <td>{{ hash }}</td>
-      </tr>
+        <tr>
+          <td class="category-label" colspan="4">{{ label }}</td>
+        </tr>
+      {{#each list }}
+        <tr class="row-{{ category }} difficulty-{{ difficulty }}">
+          <td>{{ id }}</td>
+          <td>{{ title }}</td>
+          <td>{{ __difficulty }}</td>
+          <td>{{ hash }}</td>
+        </tr>
+      {{/each }}
     {{/each }}
     </tbody>
     </table>

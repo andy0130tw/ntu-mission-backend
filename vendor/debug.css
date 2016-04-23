@@ -11,3 +11,9 @@
 .debug-main-content {
   font-size: 160%;
 }
+
+table.table-category .category-label {
+  font-size: 2em;
+  line-height: 3.5em;
+  color: #666;
+}

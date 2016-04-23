@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ title }} - Debugging</title>
+    <link rel="stylesheet" href="/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="/vendor/debug.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<div class="container">
+<h1>User - {{ user.name }}</h1>
+
+<h2>Completed</h2>
+<table>
+<thead>
+    <th>
+        <td>ID</td>
+    </th>
+</thead>
+<tbody></tbody>
+{{#each mission_completed }}
+<span></span>
+{{/each }}
+</table>
+
+<h2>Challanging</h2>
+
+
+</div>
+
+</body>
+</html>

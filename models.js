@@ -21,6 +21,7 @@ var User = db.define('user', {
   avatar:     { type: Seq.STRING },                    // }- these fields only work as a cache!
   score:      { type: Seq.INTEGER, defaultValue: 0 },  // }
   confirmed:  { type: Seq.BOOLEAN },
+  team:       { type: Seq.INTEGER },                   // for team score aggregation
   disabled:   { type: Seq.BOOLEAN }
 });
 
