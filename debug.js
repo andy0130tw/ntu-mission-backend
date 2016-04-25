@@ -67,7 +67,8 @@ app.get('/users', function(req, resp) {
 
 app.get('/log', function(req, resp) {
   models.Post.findAll({
-    order: [['fb_ts', 'DESC']]
+    order: [['fb_ts', 'DESC']],
+    include: [models.User, models.Mission]
   }).then(function(records) {
     var result = records.map(function(v, i) {
       var dv = v.dataValues;

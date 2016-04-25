@@ -1,3 +1,7 @@
+body {
+  font-size: 16px;
+}
+
 .row-campus  { background: #c8e6c9; }
 .row-emotion { background: #bbdefb; }
 .row-life    { background: #fff9c4; }
@@ -8,8 +12,18 @@
   max-width: 200px;
 }
 
+.img-fb-avatar {
+  max-width: 180px;
+}
+
 .debug-main-content {
   font-size: 160%;
+  word-break: break-all;
+}
+
+.mission-hashtag {
+  font-family: monospace;
+  font-size: 1.6em;
 }
 
 table.table-category .category-label {

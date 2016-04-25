@@ -54,10 +54,10 @@ var ScoreRecord = db.define('scoreRecord', {
 });
 
 // foreign keys
-User.hasMany(Post);
-Mission.hasMany(Post);
-
+Post.belongsTo(User);
+Post.belongsTo(Mission);
 Post.hasOne(ScoreRecord);
+
 User.hasMany(ScoreRecord);
 Mission.hasMany(ScoreRecord);
 

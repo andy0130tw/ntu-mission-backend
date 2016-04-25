@@ -16,7 +16,9 @@ var fbApiUrl = require('./fbapi-url');
 
 var app = express();
 
-app.engine('hbs', exphbs());
+var hbs = exphbs.create(require('./handlebars-config'));
+
+app.engine('hbs', hbs.engine);
 
 app.set('port', process.env['PORT'] || config.PORT || 8080);
 app.set('view engine', 'hbs');
