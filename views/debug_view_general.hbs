@@ -16,14 +16,13 @@
 
     <table class="table table-hover">
     <p>
-    Scoring：難 = 5, 中 = 3, 易 = 2.
+    分數計算規則：'一般 = <code>2</code>, 進階 = <code>3</code>, 挑戰 = <code>5</code>.
     </p>
     <thead>
       <tr>
         <th>Rank #</th>
-        <th>Name</th>
         <th>Photo</th>
-        <th>FB ID</th>
+        <th>Name</th>
         <th>Score</th>
         <th>Last updated at</th>
       </tr>
@@ -32,14 +31,20 @@
     {{#each dataset }}
       <tr>
         <td>{{ __cnt }}</td>
-        <td>{{#if name}}{{ name }}{{else }}--NO NAME--{{/if }}</td>
         <td>
         {{#if avatar}}
           <img class="img-thumbnail img-fb-avatar" src="http://graph.facebook.com/{{ fb_id }}/picture?type=large">
         {{/if }}
         </td>
-        <td>{{ fb_id }}</td>
-        <td>{{ score }}</td>
+        <td>
+        {{#if name}}
+          <span class="debug-fb-name">{{ name }}</span>
+        {{else }}
+          --NO NAME--
+        {{/if }}<br/>
+          {{ fb_id }}
+        </td>
+        <td class="debug-score-number">{{ score }}</td>
         <td>{{ date updated_at }}</td>
       </tr>
     {{/each }}

@@ -16,13 +16,23 @@ body {
   max-width: 180px;
 }
 
+.debug-fb-name {
+  font-size: 1.6em;
+}
+
+.debug-score-number {
+  font-size: 2.4em;
+  text-align: right;
+  font-family: Consolas, monospace;
+}
+
 .debug-main-content {
   font-size: 160%;
   word-break: break-all;
 }
 
 .mission-hashtag {
-  font-family: monospace;
+  font-family: Consolas, monospace;
   font-size: 1.6em;
 }
 

@@ -4,9 +4,9 @@ var models = require('./models');
 var app = express();
 
 var DIFFICULTY_LABEL = {
-  1: '易',
-  2: '中',
-  3: '難'
+  1: '一般',
+  2: '進階',
+  3: '挑戰'
 };
 
 var CATEGORY_LABEL = {
