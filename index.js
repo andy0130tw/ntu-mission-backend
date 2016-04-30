@@ -42,7 +42,18 @@ var logger = new (winston.Logger)({
 global.log = logger.info;
 
 app.get('/', function(req, resp) {
-  resp.send('It works!');
+  models.User.findAll({
+    order: [['score', 'DESC']]
+  }).then(function(records) {
+    var result = records.map(function(v, i) {
+      v.dataValues.__cnt = i + 1;
+      return v.dataValues;
+    });
+
+    resp.render('ranking', {
+      dataset: result
+    });
+  });
 });
 
 app.use('/debug', require('./debug'));
@@ -50,7 +61,7 @@ app.use('/vendor', express.static('./vendor'));
 
 app.use(function(req, resp) {
   resp.send('404');
-})
+});
 
 var SCORE_BY_DIFFICULTY = {
   '0': 0,
@@ -203,8 +214,8 @@ function processPost(post, cb_report) {
         } else {
           async.series([
             function(cb) { /* 1 */
-              log('updating mission', localPost.mission_id, 'to', legalHashId);
               if (!localPost.mission_id || localPost.mission_id == legalHashId) return cb();
+              log('updating mission id', localPost.mission_id, 'to', legalHashId);
               models.ScoreRecord
                 .findOne({ where: { post_id: localPost.id } })
                 .then(function(sr) {

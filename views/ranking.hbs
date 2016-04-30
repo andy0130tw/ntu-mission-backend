@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>排名 - 臺大總動員</title>
+  <link rel="stylesheet" href="/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/debug.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div class="container" style="max-width: 40em;">
+  <h1>排名 - 臺大總動員</h1>
+  </div>
+
+  <div class="container" style="max-width: 40em;">
+
+  <table class="table table-hover">
+  <p>
+  分數計算規則：一般 = <code>2</code>, 進階 = <code>3</code>, 挑戰 = <code>5</code>.
+  </p>
+  <thead>
+    <tr>
+      <th>名次 #</th>
+      <th>照片</th>
+      <th>姓名</th>
+      <th>積分</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#each dataset }}
+    <tr>
+      <td style="vertical-align: middle; font-size: 1.6em;">{{ __cnt }}</td>
+      <td>
+      {{#if avatar}}
+        <img class="img-thumbnail img-fb-avatar" src="http://graph.facebook.com/{{ fb_id }}/picture?type=large">
+      {{/if }}
+      </td>
+      <td>
+      {{#if name}}
+        <span class="debug-fb-name">{{ name }}</span>
+      {{else }}
+        --無名--
+      {{/if }}
+      </td>
+      <td class="debug-score-number">{{ score }}</td>
+    </tr>
+  {{/each }}
+  </div>
+</body>
+</html>
