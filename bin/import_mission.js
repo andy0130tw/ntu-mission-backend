@@ -3,7 +3,7 @@
 var fs = require('fs');
 
 var models = require('../models');
-var missions = require('../missions.json');
+var missions = require('../data/missions.json');
 
 // var cnt = 0;
 // missions.forEach((v) => {
