@@ -10,7 +10,7 @@ var db = new Seq('sqlite://testdb.sqlite', {
         underscored: true
     },
     // turn off logging if not debugging
-    logging: config.DB_LOGGING || config.DEBUG
+    logging: config.DB_LOGGING != null ? config.DB_LOGGING : config.DEBUG
 });
 
 var User = db.define('user', {
@@ -21,7 +21,6 @@ var User = db.define('user', {
   avatar:     { type: Seq.STRING },                    // }- these fields only work as a cache!
   score:      { type: Seq.INTEGER, defaultValue: 0 },  // }
   confirmed:  { type: Seq.BOOLEAN },
-  team:       { type: Seq.INTEGER },                   // for team score aggregation
   disabled:   { type: Seq.BOOLEAN }
 });
 
@@ -53,24 +52,23 @@ var ScoreRecord = db.define('scoreRecord', {
   // mid related to Mission
 });
 
+var Team = db.define('Team', {
+  name: { type: Seq.TEXT }
+});
+
 // foreign keys
+User.belongsTo(Team);
+
 Post.belongsTo(User);
 Post.belongsTo(Mission);
 Post.hasOne(ScoreRecord);
 
+ScoreRecord.belongsTo(User);
+ScoreRecord.belongsTo(Mission);
 User.hasMany(ScoreRecord);
 Mission.hasMany(ScoreRecord);
 
-db.sync().then(function() {
-  // create void user
-  User.findOrCreate({
-    where: { id: -1 },
-    defaults: {
-      fb_id: 'DOES_NOT_EXIST',
-      student_id: 'X88888888'
-    }
-  });
-});
+db.sync();
 
 module.exports = {
   db: db,
@@ -78,5 +76,6 @@ module.exports = {
   User:        User,
   Mission:     Mission,
   Post:        Post,
-  ScoreRecord: ScoreRecord
+  ScoreRecord: ScoreRecord,
+  Team:        Team
 };
