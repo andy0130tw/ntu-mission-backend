@@ -220,22 +220,18 @@ function processPost(post, cb_report) {
                 .findOne({ where: { post_id: localPost.id } })
                 .then(function(sr) {
                   if (!sr) { cb(); return; }
-                  models.Mission
-                    .findById(sr.mission_id)
-                    .then(function(mis) {
-                      models.User
-                        .findById(sr.user_id)
-                        .then(function(usr) {
-                          var dec = SCORE_BY_DIFFICULTY[mis.difficulty];
-                          var nsc = usr.score - dec;
-                          log('decrease score', usr.name, usr.score, '->', nsc, '(-' + dec + ')');
-                          return usr.decrement('score', { by: dec });
-                        }).then(function() {
-                          sr.destroy().then(function() {
-                            cb();
-                          });
-                        });
-                    });
+                  return models.Mission.findById(sr.mission_id);
+                }).then(function(mis) {
+                  return models.User.findById(sr.user_id);
+                }).then(function(usr) {
+                  var dec = SCORE_BY_DIFFICULTY[mis.difficulty];
+                  var nsc = usr.score - dec;
+                  log('decrease score', usr.name, usr.score, '->', nsc, '(-' + dec + ')');
+                  return usr.decrement('score', { by: dec });
+                }).then(function() {
+                  return sr.destroy();
+                }).then(function() {
+                  cb();
                 });
             },
             function(cb) { /* 2 */
