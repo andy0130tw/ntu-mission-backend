@@ -14,7 +14,8 @@ var CATEGORY_LABEL = {
   'emotion': '情感',
   'life':    '生活',
   'fun':     '娛樂',
-  'issue':   '議題'
+  'issue':   '議題',
+  'special': '特別'
 }
 
 app.get('/', function(req, resp) {

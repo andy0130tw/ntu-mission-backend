@@ -84,10 +84,18 @@ var req_session = request.defaults({
 function extractHashtag(str) {
   // FIXME: figure out what to place before the # character
   // note: we are not going to make it perfect
-  var matched = str.match(/\B#ntu([A-Z0-9]+?)(?![A-Z0-9])/i);
-  //(?:\b|^)#test([0-9]+)(?=[\s.,:,]|$)/i);
-  // some control characters (\u200E and \u202C) are removed from string
-  if (matched) return matched[1];
+  var pattern = /\B#ntu([A-Z0-9]+?)(?![A-Z0-9])/ig;
+  var matched, meta, cnt = 0;
+  while (matched = pattern.exec(str)) {
+    //(?:\b|^)#test([0-9]+)(?=[\s.,:,]|$)/i);
+    // some control characters (\u200E and \u202C) are removed from string
+    meta = matched[1];
+    if (meta.length == 3 && meta[1] >= '0' && meta[1] <= '9') {
+      return meta;
+    }
+    if (cnt > 10) break;
+    cnt++;
+  }
   return null;
 }
 

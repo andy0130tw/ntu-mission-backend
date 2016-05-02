@@ -16,7 +16,7 @@
 
     <table class="table table-hover">
     <p>
-    分數計算規則：'一般 = <code>2</code>, 進階 = <code>3</code>, 挑戰 = <code>5</code>.
+    分數計算規則：一般 = <code>2</code>, 進階 = <code>3</code>, 挑戰 = <code>5</code>.
     </p>
     <thead>
       <tr>
@@ -58,7 +58,6 @@
     <thead>
       <tr>
         <th>任務關鍵字</th>
-        <!--<th>次分類</th>-->
         <th>標題</th>
         <th>難度</th>
         <th>ID</th>
@@ -72,7 +71,8 @@
       {{#each list }}
         <tr class="row-{{ category }} difficulty-{{ difficulty }}">
           <td>{{ hash }}</td>
-          <td>{{ title }}</td>
+          <td><span class="debug-mission-title">{{ title }}</span>
+          {{#if content}}<br><span class="debug-mission-content">{{ content }}</span>{{/if }}</td>
           <td>{{ __difficulty }}</td>
           <td>{{ id }}</td>
         </tr>
@@ -99,7 +99,7 @@
     </thead>
     <tbody>
     {{#each dataset }}
-      <tr>
+      <tr{{#unless mission }} class="danger"{{/unless }}>
         <td>{{ id }}</td>
         <td>{{#if photo_url}}<img class="img-thumbnail img-fb-photo" src="{{ photo_url }}">{{/if }}</td>
         <td class="debug-main-content">{{{ __content }}}</td>

@@ -26,6 +26,19 @@ body {
   font-family: Consolas, monospace;
 }
 
+thead th {
+  word-break: keep-all;
+}
+
+.debug-mission-title {
+  font-size: 1.4em;
+  line-height: 1.6em;
+}
+
+.debug-mission-content {
+  word-break: break-all;
+}
+
 .debug-main-content {
   font-size: 120%;
   word-break: break-all;
@@ -34,6 +47,10 @@ body {
 .mission-hashtag {
   font-family: Consolas, monospace;
   font-size: 1.6em;
+}
+
+table.table-category tbody tr td {
+  vertical-align: middle;
 }
 
 table.table-category .category-label {
