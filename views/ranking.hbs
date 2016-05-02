@@ -15,7 +15,9 @@
 
   <table class="table table-hover table-category">
   <p>
-  分數計算規則：一般 = <code>2</code>, 進階 = <code>3</code>, 挑戰 = <code>5</code>.
+  分數計算規則：一般 = <code>2</code>, 進階 = <code>3</code>, 挑戰 = <code>5</code>.<br>
+  排名10分鐘更新一次。最後更新：{{ date lastUpdated }}。
+  
   </p>
   <thead>
     <tr>
@@ -36,7 +38,7 @@
       </td>
       <td>
       {{#if name}}
-        <span class="debug-fb-name">{{ name }}</span>
+        <span class="debug-fb-name">{{ name }}</span> x{{ __reccnt }}
       {{else }}
         --無名--
       {{/if }}

@@ -44,14 +44,20 @@ global.log = logger.info;
 app.get('/', function(req, resp) {
   models.User.findAll({
     order: [['score', 'DESC']]
-  }).then(function(records) {
-    var result = records.map(function(v, i) {
+  }).then(function(users) {
+    var result = users.map(function(v, i) {
       v.dataValues.__cnt = i + 1;
       return v.dataValues;
     });
 
+    // XXX
+    var lastUpdated = result
+      .map((v) => (v.updated_at))
+      .reduce((a, b) => (a > b ? a : b));
+    
     resp.render('ranking', {
-      dataset: result
+      dataset: result,
+      lastUpdated: lastUpdated
     });
   });
 });
