@@ -1,22 +1,8 @@
 var express = require('express');
 var models = require('./models');
+var l10n = require('./l10n');
 
 var app = express();
-
-var DIFFICULTY_LABEL = {
-  1: '一般',
-  2: '進階',
-  3: '挑戰'
-};
-
-var CATEGORY_LABEL = {
-  'campus':  '校園',
-  'emotion': '情感',
-  'life':    '生活',
-  'fun':     '娛樂',
-  'issue':   '議題',
-  'special': '特別'
-}
 
 app.get('/', function(req, resp) {
   resp.render('debug_view_home');
@@ -26,7 +12,7 @@ app.get('/missions', function(req, resp) {
   models.Mission.findAll().then(function(records) {
     var list = records.map(function(v) {
       var dv = v.dataValues;
-      dv.__difficulty = DIFFICULTY_LABEL[dv.difficulty] || dv.difficulty;
+      dv.__difficulty = l10n.DIFFICULTY_LABEL[dv.difficulty] || dv.difficulty;
       return dv;
     });
 
@@ -38,7 +24,7 @@ app.get('/missions', function(req, resp) {
 
     var result = [];
     for (var x in hash) {
-      result.push({ label: CATEGORY_LABEL[x] || x, list: hash[x] });
+      result.push({ label: l10n.CATEGORY_LABEL[x] || x, list: hash[x] });
     }
 
     resp.render('debug_view_general', {

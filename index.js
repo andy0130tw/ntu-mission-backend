@@ -57,6 +57,7 @@ app.get('/', function(req, resp) {
 });
 
 app.use('/debug', require('./debug'));
+app.use('/api', require('./api'));
 app.use('/vendor', express.static('./vendor'));
 
 app.use(function(req, resp) {
@@ -224,20 +225,24 @@ function processPost(post, cb_report) {
             function(cb) { /* 1 */
               if (!localPost.mission_id || localPost.mission_id == legalHashId) return cb();
               log('updating mission id', localPost.mission_id, 'to', legalHashId);
+
+              var _sc, _mis;
               models.ScoreRecord
                 .findOne({ where: { post_id: localPost.id } })
                 .then(function(sr) {
                   if (!sr) { cb(); return; }
+                  _sr = sr;
                   return models.Mission.findById(sr.mission_id);
                 }).then(function(mis) {
-                  return models.User.findById(sr.user_id);
+                  _mis = mis;
+                  return models.User.findById(_sr.user_id);
                 }).then(function(usr) {
-                  var dec = SCORE_BY_DIFFICULTY[mis.difficulty];
+                  var dec = SCORE_BY_DIFFICULTY[_mis.difficulty];
                   var nsc = usr.score - dec;
                   log('decrease score', usr.name, usr.score, '->', nsc, '(-' + dec + ')');
                   return usr.decrement('score', { by: dec });
                 }).then(function() {
-                  return sr.destroy();
+                  return _sr.destroy();
                 }).then(function() {
                   cb();
                 });
