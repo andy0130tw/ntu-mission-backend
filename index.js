@@ -149,12 +149,13 @@ function probePageFeed() {
         if (err) throw err;
         logger.debug('post page check ok');
 
+        // TODO: use single transaction; performance issue
         async.eachSeries(scoreCalculationArr, function(rec, cb_next) {
           // try to insert, if success then increase the score
           rec.save().then(function() {
             // XXX
-            models.Mission.findById(rec.mission_id).then(function(mis) {
-              models.User.findById(rec.user_id).then(function(usr) {
+            rec.getMission().then(function(mis) {
+              rec.getUser().then(function(usr) {
                 var inc = SCORE_BY_DIFFICULTY[mis.difficulty];
                 var nsc = usr.score + inc;
                 log('increase score', usr.name, usr.score, '->', nsc, '(+' + inc + ')');
@@ -209,7 +210,7 @@ function processPost(post, cb_report) {
         .findOne({ where: { fb_id: post.id } })
         .then(function(localPost) {
           if (localPost) {
-            // can skip 3 since only content may be changed
+            // only content may be changed, can skip step 3
             cb_next(null, localPost);
           } else {
             cb_next(null, null);
@@ -219,54 +220,23 @@ function processPost(post, cb_report) {
     function(localPost, cb_next) { /* 2: get detailed post if not exist */
       logger.verbose('post id', post.id);
 
-      function cb_next_local_wrapper() { cb_next(null, localPost, true, localPost.user_id); }
-
       if (localPost) {
         logger.verbose('already fetched; skip getting post');
         if (localPost.content == post.message) {
           contentChanged = false;
-          cb_next_local_wrapper();
+          return cb_next(null, localPost, true, localPost.user_id);
         } else {
-          async.series([
-            function(cb) { /* 1 */
-              if (!localPost.mission_id || localPost.mission_id == legalHashId) return cb();
-              log('updating mission id', localPost.mission_id, 'to', legalHashId);
-
-              var _sc, _mis;
-              models.ScoreRecord
-                .findOne({ where: { post_id: localPost.id } })
-                .then(function(sr) {
-                  if (!sr) { cb(); return; }
-                  _sr = sr;
-                  return models.Mission.findById(sr.mission_id);
-                }).then(function(mis) {
-                  _mis = mis;
-                  return models.User.findById(_sr.user_id);
-                }).then(function(usr) {
-                  var dec = SCORE_BY_DIFFICULTY[_mis.difficulty];
-                  var nsc = usr.score - dec;
-                  log('decrease score', usr.name, usr.score, '->', nsc, '(-' + dec + ')');
-                  return usr.decrement('score', { by: dec });
-                }).then(function() {
-                  return _sr.destroy();
-                }).then(function() {
-                  cb();
-                });
-            },
-            function(cb) { /* 2 */
-              localPost.update({
-                content: post.message,
-                mission_id: legalHashId
-              }).then(function() {
-                cb();
-              });
-            },
-            function() { /* 3 */
-              cb_next_local_wrapper();
-            }
-          ]);
+          // patching existing records is painful; grab the post at the next run instead
+          /*localPost.getScoreRecord().then(function(sr) {
+            return sr.destroy();
+          }).then(function() {
+            return localPost.destroy();
+          })*/localPost.destroy().then(function() {
+            // throw an error to skip this post
+            cb_next('deleted', localPost, null);
+          });
+          return;
         }
-        return;
       }
 
       contentFetched = true;
@@ -313,7 +283,7 @@ function processPost(post, cb_report) {
               avatar: userFbObj.picture.data.url
             }).then(callNext, function() {
               // unique constraint failed...
-              logger.debug('adding because last sync failure...')
+              logger.debug('adding because last sync failure...');
               searchAndCallNext();
             });
           }
@@ -325,7 +295,6 @@ function processPost(post, cb_report) {
 
       status_changed = true;
 
-      // XXX
       models.Post.create({
         fb_id: postDetailed.id,
         content: postDetailed.message,
@@ -353,30 +322,36 @@ function processPost(post, cb_report) {
           postInstance
             .update({ mission_id: mis.id })
             .then(function() {
-              models.ScoreRecord
-                .findOrInitialize({
-                  where: {
-                    user_id: postInstance.user_id,
-                    mission_id: mis.id
-                  },
-                  defaults: {
-                    post_id: postInstance.id
-                  }
-                }).spread(function(record, created) {
-                  // if created, return this record to be calculated on total score
-                  // if not, return null indicating that it is duplicated and no score should be given
-                  var recordInstance = created ? record : null;
-                  return cb_next(null, postInstance, recordInstance);
-                });
+              return models.ScoreRecord.findOrInitialize({
+                where: {
+                  user_id: postInstance.user_id,
+                  mission_id: mis.id
+                },
+                defaults: {
+                  post_id: postInstance.id
+                }
               });
+            }).spread(function(record, created) {
+              // if created, return this record to be calculated on total score
+              // if not, return null indicating that it is duplicated and no score should be given
+              var recordInstance = created ? record : null;
+              return cb_next(null, postInstance, recordInstance);
+            });
         });
     }
   ], function(err, postInstance, recordInstance) {
-    if (err) {
+    if (err == 'deleted') {
+      // this is generally not an error
+      log('post deleted due to change', postInstance.id, postInstance.fb_id);
+      return cb_report(null, 'deleted');
+    } else if (err) {
+      // whoops, something really bad just happened
       winston.error('post sync failed!!');
-      throw err;
       cb_report(null, 'error');
+      throw err;
     }
+    
+    // success
     var verdict = 'intact';
     if (contentFetched)
       verdict = 'created';
