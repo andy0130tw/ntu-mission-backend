@@ -365,7 +365,7 @@ function processPost(post, cb_report) {
 
 models.db.sync().then(function() {
   log('Model synced; ready for requests');
-  setInterval(probePageFeed, config.PROBE_INTERVAL || 300000);
+  setInterval(probePageFeed, config.PROBE_INTERVAL || 600000);
   setTimeout(probePageFeed, 0);
 });
 
