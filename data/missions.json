@@ -25,6 +25,7 @@
     {"hash": "C24", "category": "campus", "title": "把腳踏車排好", "difficulty": 2, "content": "亂停的腳踏車經常是臺大校園中的亂象，為了讓我們的校園變得更加美麗，伸出援手吧!將那些混亂化為秩序，讓我們的校園回歸原有的美麗。（拍照或影片上傳）"},
     {"hash": "C25", "category": "campus", "title": "醫學院彈鋼琴", "difficulty": 1, "content": "望著醫學院大廳角落的那台鋼琴，你是否曾經蠢蠢欲動想坐在琴台前演奏動人音樂卻裹足不前呢？別猶疑，快坐上鋼琴台前為大家演奏一曲吧！（注意事項：使用時間為平日早上六點到八點、下午五點到晚上十一點、假日下午六點至晚上十一點。）（照片或影片上傳）"},
     {"hash": "C26", "category": "campus", "title": "到理髮部剪髮", "difficulty": 2, "content": "位於總區小福與臺大醫院下的理髮部有著與現代髮廊不同的復古風味，身為一名臺大生在離校前都該進去給阿姨設計一次頭髮，留做紀念！"},
+    {"hash": "C27", "category": "campus", "title": "數完傅鐘21響", "difficulty": 2, "content": "傳說中，如果一群人在短時間內一直數傅鐘21饗就可以破除魔咒，讓我們還驗證傳奇吧！"},
 
     {"hash": "E01", "category": "emotion", "title": "好友鬼臉照", "difficulty": 1, "content": "與好友們拍攝可愛逗趣的鬼臉照吧，找出誰才是真正的鬼臉大師！（拍照上傳） "},
     {"hash": "E02", "category": "emotion", "title": "社團分享", "difficulty": 1, "content": "社團為大學三大學分之一，在社團中你學習到了什麼？社團中又有什麼值得分享的社課呢？拍下照片介紹你的社團吧！（拍照上傳）"},
@@ -57,6 +58,9 @@
     {"hash": "F13", "category": "fun", "title": "100分考卷", "difficulty": 3, "content": "學霸，是你？po出一張期中、期末考的考卷或是學期成績。（照片上傳）"},
     {"hash": "F14", "category": "fun", "title": "在學習開放空間跳無聲舞", "difficulty": 3, "content": "放鬆一下，跳支舞吧！（影片上傳）"},
     {"hash": "F15", "category": "fun", "title": "找到3個學號末兩碼跟自己一樣的人", "difficulty": 3, "content": "「我也跟你太有緣了吧！」找到另外兩個學號跟自己一樣的人！（照片上傳）"},
+    {"hash": "F16", "category": "fun", "title": "去發福廚房挑戰「浩克吃的堡」（限公館、台大店）", "difficulty": 3, "content": "限時10分鐘內吃完浩克吃的堡套餐，若挑戰成功，餐點免費招待，失敗則需付費（原價790元）"},
+    {"hash": "F17", "category": "fun", "title": "對路人大喊「整整—石化」", "difficulty": 3, "content": "霍格華茲臺大分校：拿起你的魔棒，對路人練習魔法，大喊「整整—石化」（上傳影片）"},
+    {"hash": "F18", "category": "fun", "title": "在小福前跳健康操（至少一分鐘）", "difficulty": 3, "content": "從耳熟能詳的Lucy，到國高中的健康操你還記得哪些呢？動一動身體吧！（影片上傳）"},
 
     {"hash": "L01", "category": "life", "title": "早上9點前去運動", "difficulty": 2, "content": "多久沒有早起運動了！動動身體燒燒熱量吧！（拍照上傳）"},
     {"hash": "L02", "category": "life", "title": "參與1場之夜", "difficulty": 1, "content": "所有系所每年都會有的共通回憶，自己系或別人系的之夜，去參加吧！（一張有自己的照片）"},
@@ -65,6 +69,9 @@
     {"hash": "L05", "category": "life", "title": "一餐吃五種顏色的蔬果 ", "difficulty": 3, "content": "每餐都大魚大肉嗎？吃點健康的蔬果吧！（拍照上傳）"},
     {"hash": "L06", "category": "life", "title": "外食自帶餐具（碗跟筷子)", "difficulty": 2, "content": "愛惜環保、友善環境，用自己的餐具吃飯吧！（拍照上傳）"},
     {"hash": "L07", "category": "life", "title": "介紹自己的系", "difficulty": 1, "content": "進入自己的系所有什麼收穫或體悟想要跟別人說的嗎？用三句話介紹自己的系吧！（上傳三段文字）"},
+    {"hash": "L08", "category": "life", "title": "「金」天來吃吧！", "difficulty": 3, "content": "拍下至金色三麥用餐的合照，即可過關！"},
+    {"hash": "L09", "category": "life", "title": "上傳一張週的打卡照", "difficulty": 2, "content": "每個週都有自己的風格與特色，一起來看看吧！"},
+    {"hash": "L10", "category": "life", "title": "跟朋友介紹這個活動", "difficulty": 1, "content": "tag 5個沒玩過朋友並跟他說這個活動有多好玩！"},
 
     {"hash": "I01", "category": "issue", "title": "與陳文成事件紀念廣場的立牌拍照", "difficulty": 2, "content": "你對轉型正義了解嗎？來打卡並瞭解相關議題吧！（拍照上傳）"},
     {"hash": "I02", "category": "issue", "title": "5／4學術部言論自由講座", "difficulty": 3, "content": "由學生會學術部舉辦，報名資訊請上粉專。（參加並拍照上傳）"},
@@ -82,6 +89,9 @@
     {"hash": "I14", "category": "issue", "title": "拍到校園中三種鳥類", "difficulty": 2, "content": "你瞭解臺大的鳥類嗎？嘗試拍下他們吧！（拍照上傳）"},
     {"hash": "I15", "category": "issue", "title": "拍到三種外來種動物", "difficulty": 2, "content": "你瞭解臺大的動物嗎？嘗試拍下他們吧！（拍照上傳）"},
     {"hash": "I16", "category": "issue", "title": "5/11 18:30-21:00 原住民與國家法體制", "difficulty": 2, "content": "由學生會學術部舉辦，報名資訊請上粉專。（參加並拍照上傳）"},
+    {"hash": "I17", "category": "issue", "title": "國立台灣大學植物培育溫室新建工程 說明會", "difficulty": 3, "content": "5/6 10:00 詳請見：https://goo.gl/Rt6Xzw"},
+    {"hash": "I18", "category": "issue", "title": "舊機械工程館指定為歷史建築及工綜新館新建工程設計調整 說明會", "difficulty": 3, "content": "5/6 15:00 詳請見：https://goo.gl/Rt6Xzw"},
+    {"hash": "I19", "category": "issue", "title": "瑠公圳舊址復原及小椰林道段渠道景觀工程第一期細部設計公聽會", "difficulty": 3, "content": "5/6 16:15 詳請見：https://goo.gl/Rt6Xzw"},
 
     {"hash": "S01", "category": "special", "title": "母親節特別企劃", "difficulty": 2, "content": ""},
     {"hash": "S02", "category": "special", "title": "椰林龍出沒", "difficulty": 2, "content": ""},
@@ -98,5 +108,6 @@
     {"hash": "S13", "category": "special", "title": "人文大樓", "difficulty": 2, "content": ""},
     {"hash": "S14", "category": "special", "title": "鹿鳴堂腳踏車", "difficulty": 2, "content": ""},
     {"hash": "S15", "category": "special", "title": "鹿鳴堂金色三麥", "difficulty": 3, "content": ""},
-    {"hash": "S16", "category": "special", "title": "滑板", "difficulty": 2, "content": ""}
+    {"hash": "S16", "category": "special", "title": "滑板", "difficulty": 2, "content": ""},
+    {"hash": "S17", "category": "special", "title": "風火輪", "difficulty": 3, "content": ""}
 ]
