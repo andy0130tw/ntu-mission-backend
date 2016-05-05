@@ -27,6 +27,9 @@
       <th>積分</th>
     </tr>
   </thead>
+  <tfoot><tr><td colspan="4">
+    {{#if nextPageOffset }}<a href="?offset={{ nextPageOffset }}">下一頁 →</a>{{/if }}
+  </td></tr></tfoot>
   <tbody>
   {{#each dataset }}
     <tr>
@@ -46,6 +49,7 @@
       <td class="debug-score-number">{{ score }}</td>
     </tr>
   {{/each }}
+  </tbody>
   </div>
 </body>
 </html>

@@ -61,8 +61,11 @@ User.belongsTo(Team);
 
 Post.belongsTo(User);
 Post.belongsTo(Mission);
-Post.hasOne(ScoreRecord);
 
+Post.hasOne(ScoreRecord);
+ScoreRecord.belongsTo(Post);
+// XXX: remove redundant foreign keys "User" and "Mission" in ScoreRecord
+// they can be fetched from Post
 ScoreRecord.belongsTo(User);
 ScoreRecord.belongsTo(Mission);
 User.hasMany(ScoreRecord);

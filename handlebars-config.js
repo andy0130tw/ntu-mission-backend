@@ -8,6 +8,7 @@ module.exports = {
   extname: '.hbs',
   helpers: {
     date: function(d) {
+      if (!(d instanceof Date)) return d;
       return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' '
          + leftPad(d.getHours(),   2) + ':'
          + leftPad(d.getMinutes(), 2) + ':'

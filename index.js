@@ -14,6 +14,8 @@ var models   = require('./models');
 var config   = require('./config');
 var fbApiUrl = require('./fbapi-url');
 
+var Promise = models.db.Promise;
+
 var app = express();
 
 var hbs = exphbs.create(require('./handlebars-config'));
@@ -42,20 +44,35 @@ var logger = new (winston.Logger)({
 global.log = logger.info;
 
 app.get('/', function(req, resp) {
-  models.User.findAll({
-    order: [['score', 'DESC']]
-  }).then(function(users) {
-    var result = users.map(function(v, i) {
-      v.dataValues.__cnt = i + 1;
+  var offset = 0;
+  if (req.query.offset) {
+    req.query.offset = req.query.offset - 0;
+    if (req.query.offset > 0)
+      offset = req.query.offset;
+    else
+      return resp.status(400).json({ ok: false, msg: 'invalid offset' });
+  }
+
+  models.User.findAndCount({
+    order: [['score', 'DESC']],
+    limit: 100,
+    offset: offset
+  }).then(function(data) {
+    var result = data.rows.map(function(v, i) {
+      v.dataValues.__cnt = offset + i + 1;
       return v.dataValues;
     });
 
-    // XXX
-    var lastUpdated = result
-      .map((v) => (v.updated_at))
-      .reduce((a, b) => (a > b ? a : b));
-    
+    var nextPageOffset = offset + 100;
+    if (data.count < offset + 100)
+      nextPageOffset = null;
+
+    var lastUpdatedCand = result.map((v) => (v.updated_at));
+    var lastUpdated = result.length ? lastUpdatedCand.reduce((a, b) => (a > b ? a : b)) : 'N/A';
+
     resp.render('ranking', {
+      count: data.count,
+      nextPageOffset: nextPageOffset,
       dataset: result,
       lastUpdated: lastUpdated
     });
@@ -85,8 +102,9 @@ var req_session = request.defaults({
 });
 
 /**
- *  extract the first legal hashtag
- *  @param {string} str - the post
+ *  extract the legal hashtag for mission identification
+ *  @param {string} [str] the content of the post
+ *  @returns the first legal hashtag in the post
  */
 function extractHashtag(str) {
   // FIXME: figure out what to place before the # character
@@ -117,10 +135,14 @@ function probePageFeed() {
 
   var report = { intact: 0, created: 0, updated: 0, deleted: 0 };
 
+  // mission is generally not changed during execution
+  var missionGlobalCache = {};
+
   async.whilst(function(hasNext) {
     if (hasNext == null) return true;
     return hasNext;
   }, function(cb_nextPage) {
+
     logger.verbose('send feed req', reqObj);
     req_session.get(reqObj, function(err, resp) {
       if (err)
@@ -129,6 +151,17 @@ function probePageFeed() {
       var paging = resp.body.paging;
 
       var scoreCalculationArr = [];
+
+      function cbWrapper_NextPage() {
+        if (paging) {
+          recordCount += list.length;
+          // FB already encode access_token into paging urls
+          reqObj = { url: paging.next, json: true };
+          cb_nextPage(null, true);
+        } else {
+          cb_nextPage(null, false);
+        }
+      }
 
       // SQLite db will fail randomly, use `eachSeries`
       async.each(list, function(post, cb_nextPost) {
@@ -149,37 +182,70 @@ function probePageFeed() {
         if (err) throw err;
         logger.debug('post page check ok');
 
-        // TODO: use single transaction; performance issue
+        var userCache = {};
+
         async.eachSeries(scoreCalculationArr, function(rec, cb_next) {
           // try to insert, if success then increase the score
           rec.save().then(function() {
-            // XXX
-            rec.getMission().then(function(mis) {
-              rec.getUser().then(function(usr) {
+            return rec.getPost();
+          }).then(function(post) {
+
+            var getUser = Promise.resolve(userCache[post.user_id])
+              .then(function(usr) {
+                if (!usr) {
+                  return post.getUser()
+                    .then(function(usr) {
+                      return userCache[post.user_id] = usr;
+                    });
+                }
+                return usr;
+              });
+
+            var getMissionScore = Promise.resolve(missionGlobalCache[post.mission_id])
+              .then(function(mis) {
+                if (!mis) {
+                  return post.getMission()
+                    .then(function(mis) {
+                      return missionGlobalCache[post.mission_id] = mis;
+                    });
+                }
+                return mis;
+              });
+
+            Promise.all([getUser, getMissionScore])
+              .spread(function(usr, mis) {
                 var inc = SCORE_BY_DIFFICULTY[mis.difficulty];
                 var nsc = usr.score + inc;
-                log('increase score', usr.name, usr.score, '->', nsc, '(+' + inc + ')');
-                return usr.increment('score', { by: inc });
-              }).then(function() { cb_next(); });
+                if (nsc) {
+                  log('increase score', usr.name, usr.score, '->', nsc, '(+' + inc + ')');
+                  usr.score = nsc;
+                } else {
+                  winston.warn('not increasing due to internal error');
+                }
+                cb_next();
+              });
             });
-          }, function() {
-            // do nothing, do not emit errors
-            cb_next();
-          });
         }, function() {
-          log('Score processing end');
+          var usrArr = [];
+          for (var x in userCache) {
+            usrArr.push(userCache[x]);
+          }
+          if (usrArr.length) {
+            log('Commiting', usrArr.length, 'users...');
+
+            models.db.transaction(function(t) {
+              return Promise
+                .all(usrArr.map( (v) => v.save({ transaction: t }) ))
+            }).then(function() {
+              log('Score processing end within this page');
+              cbWrapper_NextPage();
+            });
+          } else {
+            cbWrapper_NextPage();
+            // log('Score scanning without change within this page');
+          }
         });
-
-        if (paging) {
-          recordCount += list.length;
-          // FB already encode access_token into paging urls
-          reqObj = { url: paging.next, json: true };
-          cb_nextPage(null, true);
-        } else {
-          cb_nextPage(null, false);
-        }
       });
-
     });
   }, function(err) {
     if (err) {
@@ -204,7 +270,7 @@ function processPost(post, cb_report) {
   // if (!legalHashId) return cb_nextPost();
 
   async.waterfall([
-    function(cb_next) { /* 1: check if post exists */
+    function(cb_next) { /* 1: check if post exists in db */
       logger.verbose('processing post', post.id);
       models.Post
         .findOne({ where: { fb_id: post.id } })
@@ -227,6 +293,7 @@ function processPost(post, cb_report) {
           return cb_next(null, localPost, true, localPost.user_id);
         } else {
           // patching existing records is painful; grab the post at the next run instead
+          // FIXME: decrease score accordingly
           /*localPost.getScoreRecord().then(function(sr) {
             return sr.destroy();
           }).then(function() {
@@ -350,7 +417,7 @@ function processPost(post, cb_report) {
       cb_report(null, 'error');
       throw err;
     }
-    
+
     // success
     var verdict = 'intact';
     if (contentFetched)
