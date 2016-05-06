@@ -16,7 +16,7 @@ var db = new Seq('sqlite://testdb.sqlite', {
 var User = db.define('user', {
   fb_id:      { type: Seq.STRING, unique: true },
   student_id: { type: Seq.STRING, unique: true },
-  uid:        { type: Seq.STRING, unique  : true },
+  uid:        { type: Seq.STRING, unique: true },
   name:       { type: Seq.STRING },                    // }
   avatar:     { type: Seq.STRING },                    // }- these fields only work as a cache!
   score:      { type: Seq.INTEGER, defaultValue: 0 },  // }
@@ -50,9 +50,15 @@ var ScoreRecord = db.define('scoreRecord', {
   // pid related to Post
   // uid related to User
   // mid related to Mission
+}, {
+  indexes: [
+    {
+      fields: ['mission_id', 'user_id']
+    }
+  ]
 });
 
-var Team = db.define('Team', {
+var Team = db.define('team', {
   name: { type: Seq.TEXT }
 });
 
@@ -79,6 +85,8 @@ function saveAllInstances(instances, saveArg) {
       .all(instances.map( (v) => v.save(saveArg) ))
   });
 }
+
+db.sync();
 
 module.exports = {
   db: db,
