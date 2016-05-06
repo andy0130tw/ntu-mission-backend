@@ -49,7 +49,7 @@ app.get('/', function(req, resp) {
   var offset = 0;
   if (req.query.offset) {
     req.query.offset = req.query.offset - 0;
-    if (req.query.offset > 0)
+    if (req.query.offset > 0 && req.query.offset != Infinity)
       offset = req.query.offset;
     else
       return resp.status(400).json({ ok: false, msg: 'invalid offset' });
