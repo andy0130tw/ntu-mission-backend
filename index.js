@@ -20,6 +20,8 @@ var app = express();
 
 var hbs = exphbs.create(require('./handlebars-config'));
 
+var status = 'init';
+
 app.engine('hbs', hbs.engine);
 
 app.set('port', process.env['PORT'] || config.PORT || 8080);
@@ -129,6 +131,9 @@ function extractHashtag(str) {
  */
 // FIXME: should not re-enter the probing function
 function probePageFeed() {
+  if (status == 'running') return;
+  status = 'running';
+  
   log('Probing started...');
   var reqObj = fbApiUrl.PAGE_FEED();
   var recordCount = 0;
@@ -254,6 +259,7 @@ function probePageFeed() {
     log('Record count =', recordCount);
     // TODO: +x -y ~z; sync to db
     log('Record diff:', report);
+    status = 'idle';
   });
 }
 
