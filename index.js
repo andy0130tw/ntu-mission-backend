@@ -193,7 +193,8 @@ function probePageFeed() {
             var getUser = Promise.resolve(userCache[post.user_id])
               .then(function(usr) {
                 if (!usr) {
-                  return post.getUser()
+                  // for logging we need to query the name
+                  return post.getUser({ attributes: ['id', 'name', 'score'] })
                     .then(function(usr) {
                       return userCache[post.user_id] = usr;
                     });
@@ -204,7 +205,7 @@ function probePageFeed() {
             var getMissionScore = Promise.resolve(missionGlobalCache[post.mission_id])
               .then(function(mis) {
                 if (!mis) {
-                  return post.getMission()
+                  return post.getMission({ attributes: ['id', 'difficulty'] })
                     .then(function(mis) {
                       return missionGlobalCache[post.mission_id] = mis;
                     });
@@ -227,17 +228,14 @@ function probePageFeed() {
             });
         }, function() {
           var usrArr = [];
+          var saveArg = { fields: ['score'] };
           for (var x in userCache) {
             usrArr.push(userCache[x]);
           }
           if (usrArr.length) {
             log('Commiting', usrArr.length, 'users...');
 
-            models.db.transaction(function(t) {
-              return Promise
-                .all(usrArr.map( (v) => v.save({ transaction: t }) ))
-            }).then(function() {
-              log('Score processing end within this page');
+            models.saveAllInstances(usrArr).then(function() {
               cbWrapper_NextPage();
             });
           } else {
@@ -409,7 +407,7 @@ function processPost(post, cb_report) {
   ], function(err, postInstance, recordInstance) {
     if (err == 'deleted') {
       // this is generally not an error
-      log('post deleted due to change', postInstance.id, postInstance.fb_id);
+      log('post deleted due to change', postInstance.toJSON());
       return cb_report(null, 'deleted');
     } else if (err) {
       // whoops, something really bad just happened

@@ -63,22 +63,32 @@ Post.belongsTo(User);
 Post.belongsTo(Mission);
 
 Post.hasOne(ScoreRecord);
-ScoreRecord.belongsTo(Post);
-// XXX: remove redundant foreign keys "User" and "Mission" in ScoreRecord
-// they can be fetched from Post
-ScoreRecord.belongsTo(User);
-ScoreRecord.belongsTo(Mission);
 User.hasMany(ScoreRecord);
 Mission.hasMany(ScoreRecord);
 
-db.sync();
+ScoreRecord.belongsTo(Post);
+ScoreRecord.belongsTo(User);
+ScoreRecord.belongsTo(Mission);
+
+// helper functions
+function saveAllInstances(instances, saveArg) {
+  saveArg = saveArg || {};
+  return db.transaction(function(t) {
+    saveArg.transaction = t;
+    return db.Promise
+      .all(instances.map( (v) => v.save(saveArg) ))
+  });
+}
 
 module.exports = {
   db: db,
+
+  saveAllInstances: saveAllInstances,
 
   User:        User,
   Mission:     Mission,
   Post:        Post,
   ScoreRecord: ScoreRecord,
   Team:        Team
+
 };
