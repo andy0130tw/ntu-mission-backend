@@ -413,8 +413,9 @@ function processPost(post, cb_report) {
   ], function(err, postInstance, recordInstance) {
     if (err == 'deleted') {
       // this is generally not an error
-      log('post deleted due to change', postInstance.toJSON());
-      log('previous is', post);
+      log('post deleted due to change');
+      log('prev instance is', postInstance.toJSON());
+      log('now is', post);
       return cb_report(null, 'deleted');
     } else if (err) {
       // whoops, something really bad just happened
