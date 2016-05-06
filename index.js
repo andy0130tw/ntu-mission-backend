@@ -97,7 +97,7 @@ var SCORE_BY_DIFFICULTY = {
 };
 
 var req_session = request.defaults({
-    pool: { maxSockets: 4 },
+    pool: { maxSockets: 8 },
     gzip: true,
     json: true,
     forever: true
