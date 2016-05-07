@@ -82,7 +82,7 @@ function saveAllInstances(instances, saveArg) {
   return db.transaction(function(t) {
     saveArg.transaction = t;
     return db.Promise
-      .all(instances.map( (v) => v.save(saveArg) ))
+      .each(instances, (v) => v.save(saveArg) );
   });
 }
 

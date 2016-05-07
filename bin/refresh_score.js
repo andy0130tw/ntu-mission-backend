@@ -37,34 +37,39 @@ models.ScoreRecord.truncate()
 
     console.log('Re-generating ScoreRecord...');
     var recArr = [];
-    async.forEachOfSeries(posts, function(post, postIdx, cb_next) {
-      process.stdout.write('Processing post ' + (postIdx + 1) + '/' + posts.length + '...\r');
-      if (!post.mission_id) return cb_next();
-      models.ScoreRecord.findOrInitialize({
-        where: {
-          mission_id: post.mission_id,
-          user_id: post.user_id
-        },
-        defaults: {
-          post_id: post.id
-        }
-      }).spread(function(record, created) {
-        if (created) {
-          userCache[post.user_id].score += SCORE_BY_DIFFICULTY[post.mission.difficulty];
-          recArr.push(record);
-        }
-        cb_next();
+    return models.db.transaction().then(function(t) {
+      return Promise.each(posts, function(post, postIdx, postCnt) {
+        var percentage = Math.floor((postIdx + 1) / postCnt * 100);
+        process.stdout.write('Processing post ' + (postIdx + 1) + '/' + postCnt + ' (' + percentage + '%)...\r');
+        if (!post.mission_id) return;
+        return models.ScoreRecord.findOrCreate({
+          where: {
+            mission_id: post.mission_id,
+            user_id: post.user_id
+          },
+          defaults: {
+            post_id: post.id
+          },
+          transaction: t
+        }).spread(function(record, created) {
+          if (created) {
+            userCache[post.user_id].score += SCORE_BY_DIFFICULTY[post.mission.difficulty];
+            recArr.push(record);
+          }
+        });
+      }).then(function() {
+        console.log('Finished processing post. Saving ScoreRecord...');
+        return t.commit();
       });
-    }, function(err) {
-      console.log('Completed processing posts...');
-
+    }).then(function() {
       console.log('Test and apply score on users...');
       var usrArr = [];
       for (var x in userCache)
         usrArr.push(userCache[x]);
+
       var saveArg = { fields: ['score'] };
 
-      models.db.transaction(function(t) {
+      return models.db.transaction(function(t) {
         saveArg.transaction = t;
         return Promise
           .all(usrArr.map(function (user) {
@@ -79,9 +84,9 @@ models.ScoreRecord.truncate()
       }).then(function(usrSaveResult) {
         console.log('Inserting ScoreRecord instances...');
         return models.saveAllInstances(recArr);
-      }).then(function() {
-        // all done
-        console.log('Done!');
       });
+    }).then(function() {
+      // all done
+      console.log('Done!');
     });
   });

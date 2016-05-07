@@ -157,17 +157,6 @@ function probePageFeed() {
 
       var scoreCalculationArr = [];
 
-      function cbWrapper_NextPage() {
-        if (paging) {
-          recordCount += list.length;
-          // FB already encode access_token into paging urls
-          reqObj = { url: paging.next, json: true };
-          cb_nextPage(null, true);
-        } else {
-          cb_nextPage(null, false);
-        }
-      }
-
       // SQLite db will fail randomly, use `eachSeries`
       async.each(list, function(post, cb_nextPost) {
         // ignore if it is not a piece of message
@@ -189,36 +178,40 @@ function probePageFeed() {
 
         var userCache = {};
 
-        async.eachSeries(scoreCalculationArr, function(rec, cb_next) {
-          // try to insert, if success then increase the score
-          rec.save().then(function() {
-            return rec.getPost();
-          }).then(function(post) {
+        Promise.each(scoreCalculationArr, function(rec, i) {
+          // check for duplication
+          return models.ScoreRecord.findOne({
+            where: {
+              mission_id: rec.mission_id,
+              user_id: rec.user_id
+            }
+          }).then(function(_rec_virtual) {
+            if (_rec_virtual) return Promise.resolve();  // duplication!!
 
-            var getUser = Promise.resolve(userCache[post.user_id])
+            var getUser = Promise.resolve(userCache[rec.user_id])
               .then(function(usr) {
                 if (!usr) {
                   // for logging we need to query the name
-                  return post.getUser({ attributes: ['id', 'name', 'score'] })
+                  return rec.getUser({ attributes: ['id', 'name', 'score'] })
                     .then(function(usr) {
-                      return userCache[post.user_id] = usr;
+                      return userCache[rec.user_id] = usr;
                     });
                 }
                 return usr;
               });
 
-            var getMissionScore = Promise.resolve(missionGlobalCache[post.mission_id])
+            var getMission = Promise.resolve(missionGlobalCache[rec.mission_id])
               .then(function(mis) {
                 if (!mis) {
-                  return post.getMission({ attributes: ['id', 'difficulty'] })
+                  return rec.getMission({ attributes: ['id', 'difficulty'] })
                     .then(function(mis) {
-                      return missionGlobalCache[post.mission_id] = mis;
+                      return missionGlobalCache[rec.mission_id] = mis;
                     });
                 }
                 return mis;
               });
 
-            Promise.all([getUser, getMissionScore])
+            return Promise.all([getUser, getMission])
               .spread(function(usr, mis) {
                 var inc = SCORE_BY_DIFFICULTY[mis.difficulty];
                 var nsc = usr.score + inc;
@@ -226,12 +219,11 @@ function probePageFeed() {
                   log('increase score', usr.name, usr.score, '->', nsc, '(+' + inc + ')');
                   usr.score = nsc;
                 } else {
-                  winston.warn('not increasing due to internal error');
+                  logger.warn('not increasing due to internal error');
                 }
-                cb_next();
               });
-            });
-        }, function() {
+          });
+        }).then(function() {
           var usrArr = [];
           var saveArg = { fields: ['score'] };
           for (var x in userCache) {
@@ -240,12 +232,19 @@ function probePageFeed() {
           if (usrArr.length) {
             log('Commiting', usrArr.length, 'users...');
 
-            models.saveAllInstances(usrArr).then(function() {
-              cbWrapper_NextPage();
-            });
+            return models.saveAllInstances(usrArr);
           } else {
-            cbWrapper_NextPage();
             // log('Score scanning without change within this page');
+            return Promise.resolve();
+          }
+        }).then(function() {
+          if (paging) {
+            recordCount += list.length;
+            // FB already encode access_token into paging urls
+            reqObj = { url: paging.next, json: true };
+            cb_nextPage(null, true);
+          } else {
+            cb_nextPage(null, false);
           }
         });
       });
@@ -384,8 +383,13 @@ function processPost(post, cb_report) {
         return cb_next(null, postInstance);
       }
 
+      if (!legalHashId) {
+        // no mission; yielding no score record indeed
+        return cb_next(null, postInstance, null);
+      }
+
       models.Mission
-        .findOne({ where: { hash: legalHashId } })
+        .findOne({ where: { hash: legalHashId.toUpperCase() } })
         .then(function(mis) {
           if (!mis)
             return cb_next(null, postInstance, null);
@@ -393,20 +397,12 @@ function processPost(post, cb_report) {
           postInstance
             .update({ mission_id: mis.id })
             .then(function() {
-              return models.ScoreRecord.findOrInitialize({
-                where: {
-                  user_id: postInstance.user_id,
-                  mission_id: mis.id
-                },
-                defaults: {
-                  post_id: postInstance.id
-                }
+              var recordInstance = models.ScoreRecord.build({
+                user_id: postInstance.user_id,
+                mission_id: mis.id,
+                post_id: postInstance.id
               });
-            }).spread(function(record, created) {
-              // if created, return this record to be calculated on total score
-              // if not, return null indicating that it is duplicated and no score should be given
-              var recordInstance = created ? record : null;
-              return cb_next(null, postInstance, recordInstance);
+              cb_next(null, postInstance, recordInstance);
             });
         });
     }
