@@ -344,7 +344,10 @@ function processPost(post, cb_report) {
           if (user) {
             userKey = user.id;
             logger.verbose('user key', userKey);
-            callNext(user);
+            models.User.update({
+              name: userFbObj.name,
+              avatar: userFbObj.picture.data.url
+            }).then(callNext, function(){});
           } else {
             logger.verbose('user not in db; trying to add');
             models.User.create({
