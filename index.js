@@ -344,7 +344,7 @@ function processPost(post, cb_report) {
           if (user) {
             userKey = user.id;
             logger.verbose('user key', userKey);
-            models.User.update({
+            user.update({
               name: userFbObj.name,
               avatar: userFbObj.picture.data.url
             }).then(callNext, function(){});
