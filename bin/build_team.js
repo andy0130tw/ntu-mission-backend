@@ -185,11 +185,8 @@ models.Team.sync().then(function() {
       });  // end of user
   })  // end of team
   .then(function() {
-    return Promise.resolve([teams, usrArr]);
+    return Promise.resolve(usrArr);
   });
-}).spread(function(teams, usrArr) {
-  console.log('Saving updated user instances...');
-  return models.saveAllInstances(usrArr);
 }).then(function() {
   console.log('Writing back cache...');
   return new Promise(function(resolve, reject) {
@@ -202,6 +199,9 @@ models.Team.sync().then(function() {
       }
     );
   });
+}).then(function(usrArr) {
+  console.log('Saving updated user instances...');
+  return models.saveAllInstances(usrArr);
 }).then(function() {
   console.log('Done!');
 });
