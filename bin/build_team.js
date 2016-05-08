@@ -128,7 +128,8 @@ models.Team.sync().then(function() {
       .then(function(team) {
         return Promise.each(_team_hash.__members, function(user, userIdx) {
           var urlStr = user.__real_url || 'https://facebook.com/' + user.__username;
-          process.stdout.write('    - Probing user ' + user.name + ' (' + urlStr + ')\t...');
+          var urlStrDisp = user.__real_url || user.__username;
+          process.stdout.write('    - Probing user ' + user.name + ' (' + urlStrDisp + ')\t...');
 
           function updateUserInst(usrInst, obj) {
             usrArr.push(usrInst);
