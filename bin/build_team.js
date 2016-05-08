@@ -149,7 +149,7 @@ models.Team.sync().then(function() {
           if (userIdCache.hasOwnProperty(urlStr)) {
             var fb_id = userIdCache[urlStr];
             process.stdout.write('\b\b\b -- ' + fb_id + ' (cached)\n');
-            return models.User.findOne({ where: { fb_id: fb_id }, include: models.Team })
+            return models.User.findOne({ where: { fb_id: fb_id } })
               .then(function(usrInst) {
                 if (!usrInst) return Promise.reject(user);
                 updateUserInst(usrInst, user);
@@ -171,7 +171,7 @@ models.Team.sync().then(function() {
               return promisifiedRequestGet(fbApiUrl.USER(publicUid));
             }).then(function(resp) {
               var avatarUrl = user.__avatarUrl = resp.body.picture.data.url;
-              return models.User.findOne({ where: { avatar: avatarUrl }, include: models.Team });
+              return models.User.findOne({ where: { avatar: avatarUrl } });
             }).then(function(usrInst) {
               // if no user can be found we can be very sad...
               if (!usrInst) {
