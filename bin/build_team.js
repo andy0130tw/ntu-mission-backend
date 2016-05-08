@@ -179,6 +179,7 @@ models.Team.sync().then(function() {
                 return Promise.reject(user);
               }
 
+              userIdCache[urlStr] = usrInst.fb_id;
               process.stdout.write('\b\b\b \033[32mmatched ' + usrInst.name + ' ==> ' + usrInst.fb_id + '\033[0m\n');
               updateUserInst(usrInst, user);
             }).catch(userNotFoundInDBHandler);
@@ -188,6 +189,9 @@ models.Team.sync().then(function() {
   .then(function() {
     return Promise.resolve(usrArr);
   });
+}).then(function(usrArr) {
+  console.log('Saving updated user instances...');
+  return models.saveAllInstances(usrArr);
 }).then(function() {
   console.log('Writing back cache...');
   return new Promise(function(resolve, reject) {
@@ -200,9 +204,6 @@ models.Team.sync().then(function() {
       }
     );
   });
-}).then(function(usrArr) {
-  console.log('Saving updated user instances...');
-  return models.saveAllInstances(usrArr);
 }).then(function() {
   console.log('Done!');
 });
