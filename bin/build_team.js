@@ -135,9 +135,8 @@ models.Team.sync().then(function() {
             usrArr.push(usrInst);
             usrInst.team_id = team.id;
             // do not call update immediately!!
-            for (var x in user) {
-              usrInst[x] = user[x];
-            }
+            usrInst.uid = obj.name;
+            usrInst.student_id = obj.student_id;
           }
 
           function userNotFoundInDBHandler() {
