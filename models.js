@@ -15,7 +15,7 @@ var db = new Seq('sqlite://testdb.sqlite', {
 
 var User = db.define('user', {
   fb_id:      { type: Seq.STRING, unique: true },
-  student_id: { type: Seq.STRING, unique: true },
+  student_id: { type: Seq.STRING },
   uid:        { type: Seq.STRING, unique: true },
   name:       { type: Seq.STRING },                    // }
   avatar:     { type: Seq.STRING },                    // }- these fields only work as a cache!
