@@ -145,8 +145,8 @@ models.Team.sync().then(function() {
             process.stdout.write('\b\b\b \033[33mUser not found QQ. Not updating.\033[0m\n');
           }
 
-          if (userIdCache.hasOwnProperty(user.__username)) {
-            var fb_id = userIdCache[user.__username];
+          if (userIdCache.hasOwnProperty(urlStr)) {
+            var fb_id = userIdCache[urlStr];
             process.stdout.write('\b\b\b -- ' + fb_id + ' (cached)\n');
             return models.User.findOne({ where: { fb_id: fb_id }, include: models.Team })
               .then(function(usrInst) {
@@ -175,7 +175,6 @@ models.Team.sync().then(function() {
               // if no user can be found we can be very sad...
               if (!usrInst) {
                 // TODO: ...but we decide to preserve the cache with a mark
-                // userIdCache[user.__username] = '!' + user.__avatarUrl;
                 return Promise.reject(user);
               }
 
