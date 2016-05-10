@@ -11,7 +11,10 @@ var fbApiUrl = require('../fbapi-url');
 var PATH_USER_ID_CACHE = './data/user_id_cache.json';
 var CONCURRENT_LIMIT = 4;
 
-var req_session = request.defaults({ headers: { 'User-Agent': 'request' }});
+var req_session = request.defaults({
+  headers: { 'User-Agent': 'request' },
+  forever: true
+});
 var Promise = models.db.Promise;
 
 var userIdCache;
@@ -122,6 +125,8 @@ models.Team.sync().then(function() {
 }).then(function(teams) {
   console.log('Collecting profile, making mappings...');
   var usrArr = [];
+  var usrNotFoundArr = [];
+
   return Promise.each(teams, function(_team_hash, teamIdx, teamLen) {
     console.log('  - For team ' + _team_hash.name + ' (' + (teamIdx + 1) + '/' + teamLen + '):');
     return models.Team.create(_team_hash)
@@ -138,10 +143,11 @@ models.Team.sync().then(function() {
             usrInst.student_id = obj.student_id;
           }
 
-          function userNotFoundInDBHandler() {
+          function userNotFoundInDBHandler(user) {
             // we made sure that the user has the avatar/fb_id, but we can't find him
             // maybe he didn't has posts on the event page QQ
             process.stdout.write('\b\b\b \033[33mUser not found QQ. Not updating.\033[0m\n');
+            usrNotFoundArr.push(user);
           }
 
           if (userIdCache.hasOwnProperty(urlStr)) {
@@ -163,7 +169,7 @@ models.Team.sync().then(function() {
                 process.stdout.write('\b\b\b -- (' + publicUid + ')...');
                 return Promise.resolve(publicUid);
               } else {
-                return Promise.reject('id not found');
+                return Promise.reject([user, 'id not found']);
               }
             }).then(function(publicUid) {
               return promisifiedRequestGet(fbApiUrl.USER(publicUid));
@@ -185,10 +191,16 @@ models.Team.sync().then(function() {
       });  // end of user
   })  // end of team
   .then(function() {
-    return Promise.resolve(usrArr);
+    return Promise.resolve([usrArr, usrNotFoundArr]);
   });
-}).then(function(usrArr) {
+}).spread(function(usrArr, usrNotFoundArr) {
   console.log('Saving updated user instances...');
+  if (usrNotFoundArr.length) {
+    console.log('The following user(s) are not matched:');
+    usrNotFoundArr.forEach(function(v) {
+      console.log(v);
+    });
+  }
   return models.saveAllInstances(usrArr);
 }).then(function() {
   console.log('Writing back cache...');
