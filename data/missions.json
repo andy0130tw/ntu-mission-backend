@@ -26,9 +26,9 @@
     {"hash": "C25", "category": "campus", "title": "醫學院彈鋼琴", "difficulty": 1, "content": "望著醫學院大廳角落的那台鋼琴，你是否曾經蠢蠢欲動想坐在琴台前演奏動人音樂卻裹足不前呢？別猶疑，快坐上鋼琴台前為大家演奏一曲吧！（注意事項：使用時間為平日早上六點到八點、下午五點到晚上十一點、假日下午六點至晚上十一點。）（照片或影片上傳）"},
     {"hash": "C26", "category": "campus", "title": "到理髮部剪髮", "difficulty": 2, "content": "位於總區小福與臺大醫院下的理髮部有著與現代髮廊不同的復古風味，身為一名臺大生在離校前都該進去給阿姨設計一次頭髮，留做紀念！"},
     {"hash": "C27", "category": "campus", "title": "數完傅鐘21響", "difficulty": 2, "content": "傳說中，如果一群人在短時間內一直數傅鐘21饗就可以破除魔咒，讓我們還驗證傳奇吧！"},
-    {"hash": "C28", "category": "campus", "title": "在校內找到3個AED", "difficulty": 2,  "content": "AED(Automated External Defibrillator)，稱為「自動體外心臟電擊去顫器」，是一台能夠自動偵測傷病患心律脈搏、並施以電擊使心臟恢復正常運作的儀器，在緊急時刻是相當重要又便利的急救器具。請在校內找到三個AED吧!"}.
-    {"hash": "C29", "category": "campus", "title": "在椰林大道看日出", "difficulty": 3,  "content": "白天的椰林大道、夜晚的椰林大道你或許走過，那你有看過在椰林大道的日出嗎?跟大家分享吧! "},
-    {"hash": "C30", "category": "campus", "title": "跟警衛或清潔阿姨叔叔表達感謝", "difficulty": 1, "content": "校園內有許多默默服務著我們的人，不論是警衛室內的伯伯、阿姨說，或是跟校內的職工、清潔阿姨叔叔，跟他們說一聲辛苦了表達謝意吧! "}.
+    {"hash": "C28", "category": "campus", "title": "在校內找到3個AED", "difficulty": 2, "content": "AED(Automated External Defibrillator)，稱為「自動體外心臟電擊去顫器」，是一台能夠自動偵測傷病患心律脈搏、並施以電擊使心臟恢復正常運作的儀器，在緊急時刻是相當重要又便利的急救器具。請在校內找到三個AED吧!"},
+    {"hash": "C29", "category": "campus", "title": "在椰林大道看日出", "difficulty": 3, "content": "白天的椰林大道、夜晚的椰林大道你或許走過，那你有看過在椰林大道的日出嗎?跟大家分享吧! "},
+    {"hash": "C30", "category": "campus", "title": "跟警衛或清潔阿姨叔叔表達感謝", "difficulty": 1, "content": "校園內有許多默默服務著我們的人，不論是警衛室內的伯伯、阿姨說，或是跟校內的職工、清潔阿姨叔叔，跟他們說一聲辛苦了表達謝意吧! "},
     {"hash": "C31", "category": "campus", "title": "神秘地點16（體能訓練場）", "difficulty": 1, "content": ""},
     {"hash": "C32", "category": "campus", "title": "神秘地點17（車）", "difficulty": 1,"content": ""},
     {"hash": "C33", "category": "campus", "title": "神秘地點18（小丑）", "difficulty": 1,"content": ""},
