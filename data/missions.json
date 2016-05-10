@@ -26,6 +26,21 @@
     {"hash": "C25", "category": "campus", "title": "醫學院彈鋼琴", "difficulty": 1, "content": "望著醫學院大廳角落的那台鋼琴，你是否曾經蠢蠢欲動想坐在琴台前演奏動人音樂卻裹足不前呢？別猶疑，快坐上鋼琴台前為大家演奏一曲吧！（注意事項：使用時間為平日早上六點到八點、下午五點到晚上十一點、假日下午六點至晚上十一點。）（照片或影片上傳）"},
     {"hash": "C26", "category": "campus", "title": "到理髮部剪髮", "difficulty": 2, "content": "位於總區小福與臺大醫院下的理髮部有著與現代髮廊不同的復古風味，身為一名臺大生在離校前都該進去給阿姨設計一次頭髮，留做紀念！"},
     {"hash": "C27", "category": "campus", "title": "數完傅鐘21響", "difficulty": 2, "content": "傳說中，如果一群人在短時間內一直數傅鐘21饗就可以破除魔咒，讓我們還驗證傳奇吧！"},
+    {"hash": "C28", "category": "campus", "title": "在校內找到3個AED", "difficulty": 2,  "content": "AED(Automated External Defibrillator)，稱為「自動體外心臟電擊去顫器」，是一台能夠自動偵測傷病患心律脈搏、並施以電擊使心臟恢復正常運作的儀器，在緊急時刻是相當重要又便利的急救器具。請在校內找到三個AED吧!"}.
+    {"hash": "C29", "category": "campus", "title": "在椰林大道看日出", "difficulty": 3,  "content": "白天的椰林大道、夜晚的椰林大道你或許走過，那你有看過在椰林大道的日出嗎?跟大家分享吧! "},
+    {"hash": "C30", "category": "campus", "title": "跟警衛或清潔阿姨叔叔表達感謝", "difficulty": 1, "content": "校園內有許多默默服務著我們的人，不論是警衛室內的伯伯、阿姨說，或是跟校內的職工、清潔阿姨叔叔，跟他們說一聲辛苦了表達謝意吧! "}.
+    {"hash": "C31", "category": "campus", "title": "神秘地點16（體能訓練場）", "difficulty": 1, "content": ""},
+    {"hash": "C32", "category": "campus", "title": "神秘地點17（車）", "difficulty": 1,"content": ""},
+    {"hash": "C33", "category": "campus", "title": "神秘地點18（小丑）", "difficulty": 1,"content": ""},
+    {"hash": "C34", "category": "campus", "title": "神秘地點19（昆蟲標本）", "difficulty": 3, "content": ""},
+    {"hash": "C35", "category": "campus", "title": "神秘地點20（雅頌坊）", "difficulty": 1,"content": ""},
+    {"hash": "C36", "category": "campus", "title": "神秘地點21（藏寶閣)", "difficulty": 3, "content": ""},
+    {"hash": "C37", "category": "campus", "title": "神秘地點22（心輔中心）", "difficulty": 2, "content": ""},
+    {"hash": "C38", "category": "campus", "title": "神秘地點23（樂學）", "difficulty": 1, "content": ""},
+    {"hash": "C39", "category": "campus", "title": "神秘地點24（大福）", "difficulty": 1, "content": ""},
+    {"hash": "C40", "category": "campus", "title": "神秘地點25（公衛前） ", "difficulty": 2, "content": ""},
+    {"hash": "C41", "category": "campus", "title": "神秘地點26（小福旁）", "difficulty": 1, "content": ""},
+    {"hash": "C42", "category": "campus", "title": "神秘地點27（醫學院餐廳）", "difficulty": 2, "content": ""},
 
     {"hash": "E01", "category": "emotion", "title": "好友鬼臉照", "difficulty": 1, "content": "與好友們拍攝可愛逗趣的鬼臉照吧，找出誰才是真正的鬼臉大師！（拍照上傳） "},
     {"hash": "E02", "category": "emotion", "title": "社團分享", "difficulty": 1, "content": "社團為大學三大學分之一，在社團中你學習到了什麼？社團中又有什麼值得分享的社課呢？拍下照片介紹你的社團吧！（拍照上傳）"},
@@ -93,7 +108,7 @@
     {"hash": "I18", "category": "issue", "title": "舊機械工程館指定為歷史建築及工綜新館新建工程設計調整 說明會", "difficulty": 3, "content": "5/6 15:00 詳請見：https://goo.gl/Rt6Xzw"},
     {"hash": "I19", "category": "issue", "title": "瑠公圳舊址復原及小椰林道段渠道景觀工程第一期細部設計公聽會", "difficulty": 3, "content": "5/6 16:15 詳請見：https://goo.gl/Rt6Xzw"},
 
-    {"hash": "S01", "category": "special", "title": "母親節特別企劃", "difficulty": 2, "content": ""},
+    {"hash": "S01", "category": "special", "title": "母親節特別企劃", "difficulty": 2, "content": "A.拍一張屬於你的拍立得母親節卡片\nB.與照片合照一張上傳活動頁面\nC.回家拿給媽媽或寄給媽媽"},
     {"hash": "S02", "category": "special", "title": "椰林龍出沒", "difficulty": 2, "content": ""},
     {"hash": "S03", "category": "special", "title": "真心話喝一杯", "difficulty": 3, "content": ""},
     {"hash": "S04", "category": "special", "title": "友情大考驗", "difficulty": 3, "content": ""},
@@ -106,8 +121,8 @@
     {"hash": "S11", "category": "special", "title": "芳蘭大厝", "difficulty": 3, "content": ""},
     {"hash": "S12", "category": "special", "title": "瑠公圳", "difficulty": 2, "content": ""},
     {"hash": "S13", "category": "special", "title": "人文大樓", "difficulty": 2, "content": ""},
-    {"hash": "S14", "category": "special", "title": "鹿鳴堂腳踏車", "difficulty": 2, "content": ""},
+    {"hash": "S14", "category": "special", "title": "鹿鳴堂腳踏車", "difficulty": 3, "content": ""},
     {"hash": "S15", "category": "special", "title": "鹿鳴堂金色三麥", "difficulty": 3, "content": ""},
     {"hash": "S16", "category": "special", "title": "滑板", "difficulty": 2, "content": ""},
-    {"hash": "S17", "category": "special", "title": "風火輪", "difficulty": 3, "content": ""}
+    {"hash": "S17", "category": "special", "title": "風火輪", "difficulty": 2, "content": ""}
 ]
