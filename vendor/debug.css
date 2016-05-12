@@ -18,6 +18,7 @@ body {
 
 .img-fb-avatar-indiv {
   max-width: 2em;
+  border-radius: 4px;
 }
 
 .debug-fb-name {
@@ -25,7 +26,7 @@ body {
 }
 
 .debug-fb-name-indiv {
-  font-size: .7em;
+  font-size: .9em;
 }
 
 .debug-score-number {
@@ -35,10 +36,15 @@ body {
 }
 
 .debug-score-number-indiv {
-  font-size: 1.1em;
+  font-size: 1.2em;
   font-weight: 300;
   text-align: right;
   font-family: Consolas, monospace;
+}
+
+.debug-team-name {
+  font-size: 1.6em;
+  line-height: 1.8;
 }
 
 thead th {
@@ -72,4 +78,8 @@ table.table-category .category-label {
   font-size: 2em;
   line-height: 3.5em;
   color: #666;
+}
+
+#row-1 > td, #row-2 > td, #row-3 > td {
+  background: #d9edf7;
 }

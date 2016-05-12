@@ -26,9 +26,7 @@
   <thead>
     <tr>
       <th>名次&nbsp;#</th>
-      <th>組員1</th>
-      <th>組員2</th>
-      <th>組員3</th>
+      <th>組名&nbsp;/&nbsp;組員</th>
       <th>總分</th>
     </tr>
   </thead>
@@ -37,27 +35,24 @@
   </td></tr></tfoot>
   <tbody>
   {{#each dataset }}
-    <tr>
+    <tr id="row-{{ __cnt }}">
       <td style="vertical-align: middle; font-size: 1.6em;">{{ __cnt }}</td>
       <td>
+        <div class="debug-team-name text-info">{{ name }}</div>
       {{#if user1}}
-        <img class="img-thumbnail img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user1.fb_id }}/picture?type=large">
+        <img class="img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user1.fb_id }}/picture?type=large">
         <span class="debug-fb-name-indiv">{{ user1.name }}</span>
-        <span class="debug-score-number-indiv">{{ user1.score }}</td>
+        <span class="debug-score-number-indiv">{{ user1.score }}</span>
       {{/if }}
-      </td>
-      <td>
-      {{#if user2}}
-        <img class="img-thumbnail img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user2.fb_id }}/picture?type=large">
+      {{#if user2}} |
+        <img class="img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user2.fb_id }}/picture?type=large">
         <span class="debug-fb-name-indiv">{{ user2.name }}</span>
-        <span class="debug-score-number-indiv">{{ user2.score }}</td>
+        <span class="debug-score-number-indiv">{{ user2.score }}</span>
       {{/if }}
-      </td>
-      <td>
-      {{#if user3}}
-        <img class="img-thumbnail img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user3.fb_id }}/picture?type=large">
+      {{#if user3}} |
+        <img class="img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user3.fb_id }}/picture?type=large">
         <span class="debug-fb-name-indiv">{{ user3.name }}</span>
-        <span class="debug-score-number-indiv">{{ user3.score }}</td>
+        <span class="debug-score-number-indiv">{{ user3.score }}</span>
       {{/if }}
       </td>
 
