@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>團隊排名 - 臺大總動員</title>
+  <link rel="stylesheet" href="/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/debug.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div class="container" style="max-width: 40em;">
+  <h1>團隊排名 - 臺大總動員</h1>
+  </div>
+
+  <div class="container" style="max-width: 40em;">
+
+  <ul class="nav nav-pills nav-justified">
+    <li               ><a href="/"                 >個人排名</a>
+    <li class="active"><a href="javascript:void(0)">團隊排名 (NEW!)</a>
+  </ul>
+
+  <p>
+    排名更新與使用者總分連動。
+  </p>
+
+  <table class="table table-hover table-category">
+  <thead>
+    <tr>
+      <th>名次&nbsp;#</th>
+      <th>組員1</th>
+      <th>組員2</th>
+      <th>組員3</th>
+      <th>總分</th>
+    </tr>
+  </thead>
+  <tfoot><tr><td colspan="4">
+    <!-- Andy Pan, 2016/5/12, see /api for hidden tests -->
+  </td></tr></tfoot>
+  <tbody>
+  {{#each dataset }}
+    <tr>
+      <td style="vertical-align: middle; font-size: 1.6em;">{{ __cnt }}</td>
+      <td>
+      {{#if user1}}
+        <img class="img-thumbnail img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user1.fb_id }}/picture?type=large">
+        <span class="debug-fb-name-indiv">{{ user1.name }}</span>
+        <span class="debug-score-number-indiv">{{ user1.score }}</td>
+      {{/if }}
+      </td>
+      <td>
+      {{#if user2}}
+        <img class="img-thumbnail img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user2.fb_id }}/picture?type=large">
+        <span class="debug-fb-name-indiv">{{ user2.name }}</span>
+        <span class="debug-score-number-indiv">{{ user2.score }}</td>
+      {{/if }}
+      </td>
+      <td>
+      {{#if user3}}
+        <img class="img-thumbnail img-fb-avatar-indiv" src="http://graph.facebook.com/{{ user3.fb_id }}/picture?type=large">
+        <span class="debug-fb-name-indiv">{{ user3.name }}</span>
+        <span class="debug-score-number-indiv">{{ user3.score }}</td>
+      {{/if }}
+      </td>
+
+      <td class="debug-score-number">{{ score_total }}</td>
+    </tr>
+  {{/each }}
+  </tbody>
+  </div>
+</body>
+</html>

@@ -16,12 +16,27 @@ body {
   max-width: 4.2em;
 }
 
+.img-fb-avatar-indiv {
+  max-width: 2em;
+}
+
 .debug-fb-name {
   font-size: 1.6em;
 }
 
+.debug-fb-name-indiv {
+  font-size: .7em;
+}
+
 .debug-score-number {
   font-size: 2.4em;
+  text-align: right;
+  font-family: Consolas, monospace;
+}
+
+.debug-score-number-indiv {
+  font-size: 1.1em;
+  font-weight: 300;
   text-align: right;
   font-family: Consolas, monospace;
 }

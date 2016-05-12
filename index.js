@@ -81,6 +81,43 @@ app.get('/', function(req, resp) {
   });
 });
 
+app.get('/team', function(req, resp) {
+  if (req.query.offset) {
+    return resp.status(400).json({ ok: false, msg: 'so what?', bbtan: '\u310f\u52dd' });
+  }
+
+  var teamHash = {};
+
+  models.db.query('SELECT team.id, team.name, sum(user.score) as score_total ' +
+    'FROM user, team on team.id = user.team_id group by team.id order by score_total desc')
+  .spread(function(rows, metadata) {
+    rows.forEach(function(row) {
+      teamHash[row.id] = row;
+    });
+    return models.User.findAll().then(function(users) {
+      users.forEach(function(user) {
+        var team = teamHash[user.team_id];
+        if (!team) return;
+        for (var i = 1; i <= 3; i++) {
+          if (!team['user' + i]) {
+            team['user' + i] = user.dataValues;
+            break;
+          }
+        }
+      });
+
+      var result = rows.map(function(v, i) {
+        v.__cnt = i + 1;
+        return v;
+      });
+
+      resp.render('ranking-team', {
+        dataset: result
+      });
+    });
+  });
+});
+
 app.use('/debug', require('./debug'));
 app.use('/api', require('./api'));
 app.use('/vendor', express.static('./vendor'));
@@ -221,6 +258,8 @@ function probePageFeed() {
                 } else {
                   logger.warn('not increasing due to internal error');
                 }
+              }).then(function() {
+                return rec.save();
               });
           });
         }).then(function() {
