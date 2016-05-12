@@ -81,6 +81,7 @@ app.get('/', function(req, resp) {
   });
 });
 
+/* todo: cache the result */
 app.get('/team', function(req, resp) {
   if (req.query.offset) {
     return resp.status(400).json({ ok: false, msg: 'so what?', bbtan: '\u310f\u52dd' });
@@ -88,13 +89,15 @@ app.get('/team', function(req, resp) {
 
   var teamHash = {};
 
-  models.db.query('SELECT team.id, team.name, sum(user.score) as score_total ' +
-    'FROM user, team on team.id = user.team_id group by team.id order by score_total desc')
+  models.db.query('SELECT team.id, team.name, sum(user.score) AS score_total ' +
+    'FROM user, team ON team.id = user.team_id GROUP BY team.id ORDER BY score_total DESC')
   .spread(function(rows, metadata) {
     rows.forEach(function(row) {
       teamHash[row.id] = row;
     });
-    return models.User.findAll().then(function(users) {
+    return models.User.findAll({
+      order: [['score', 'DESC']]
+    }).then(function(users) {
       users.forEach(function(user) {
         var team = teamHash[user.team_id];
         if (!team) return;
